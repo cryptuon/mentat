@@ -1,0 +1,638 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{abstract}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{subcaption}
+
+% Page layout
+\geometry{margin=1in}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Mentat Protocol}
+\fancyhead[R]{\today}
+\fancyfoot[C]{\thepage}
+
+% Colors
+\definecolor{mentatblue}{RGB}{59, 130, 246}
+\definecolor{mentatgray}{RGB}{107, 114, 128}
+
+% Hyperref setup
+\hypersetup{
+    colorlinks=true,
+    linkcolor=mentatblue,
+    citecolor=mentatblue,
+    urlcolor=mentatblue
+}
+
+% Title formatting
+\titleformat{\section}{\large\bfseries\color{mentatblue}}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries\color{mentatgray}}{\thesubsection}{1em}{}
+
+% Code listings
+\lstset{
+    basicstyle=\ttfamily\small,
+    commentstyle=\color{mentatgray},
+    keywordstyle=\color{mentatblue},
+    stringstyle=\color{red},
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{gray!10}
+}
+
+\begin{document}
+
+% Title page
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+
+    {\Huge\bfseries\color{mentatblue} Mentat Protocol}
+
+    \vspace{0.5cm}
+    {\Large Fully Permissionless Prediction Markets}
+
+    \vspace{0.3cm}
+    {\large Powered by AI Agents and zkTLS}
+
+    \vspace{2cm}
+
+    \begin{abstract}
+        \noindent Mentat Protocol introduces the first fully permissionless prediction market platform that combines AI agents for automated market creation with zero-knowledge Transport Layer Security (zkTLS) for trustless resolution. Unlike existing solutions that rely on governance tokens or centralized oracles, Mentat enables anyone to create prediction markets through natural language prompts while ensuring cryptographically verifiable outcomes. This whitepaper presents the technical architecture, economic model, and market strategy for building prediction markets that are simultaneously fun, trustless, and scalable.
+    \end{abstract}
+
+    \vspace{1cm}
+
+    \begin{tabular}{ll}
+        \textbf{Protocol Version:} & 1.0 \\
+        \textbf{Network:} & Solana \\
+        \textbf{Document Version:} & Draft v0.1 \\
+        \textbf{Last Updated:} & \today \\
+    \end{tabular}
+
+    \vspace{2cm}
+
+    \textit{Confidential - For Investment and Partnership Evaluation}
+
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+\section{Executive Summary}
+
+\subsection{The Opportunity}
+The prediction market industry is projected to reach \$95.5 billion by 2035, yet current solutions face fundamental limitations. Existing platforms like Polymarket rely on centralized market creation, while decentralized alternatives like UMA suffer from governance token vulnerabilities that enable coordinated attacks with relatively small capital requirements.
+
+\subsection{The Innovation}
+Mentat Protocol solves these problems through two breakthrough technologies:
+\begin{itemize}
+    \item \textbf{AI Agents}: Enable permissionless market creation at scale by translating natural language prompts into technically precise prediction markets
+    \item \textbf{zkTLS Integration}: Provides cryptographic proof of real-world outcomes without requiring trusted intermediaries or governance tokens
+\end{itemize}
+
+\subsection{Market Position}
+Mentat uniquely combines:
+\begin{itemize}
+    \item Polymarket's user experience without centralized market creation
+    \item Pump.fun's permissionlessness with quality controls
+    \item UMA's flexibility without governance token vulnerabilities
+    \item Chainlink's speed for subjective and unstructured data
+\end{itemize}
+
+\subsection{Business Model}
+Revenue streams include:
+\begin{itemize}
+    \item Trading fees (0.5-2\% based on market quality)
+    \item Market creation fees via staking requirements
+    \item Premium features and analytics
+    \item Data licensing and API access
+\end{itemize}
+
+\subsection{Funding and Roadmap}
+[TO BE COMPLETED - Funding requirements, use of funds, timeline]
+
+\section{Market Analysis}
+
+\subsection{Market Size and Growth}
+The prediction market industry demonstrates strong fundamentals:
+\begin{itemize}
+    \item Current market size: \$2.1 billion (2024)
+    \item Projected CAGR: 18.3\% (2024-2035)
+    \item Target market size by 2035: \$95.5 billion
+\end{itemize}
+
+Key growth drivers include:
+\begin{itemize}
+    \item Increasing mainstream adoption of cryptocurrency
+    \item Growing interest in alternative investment products
+    \item Corporate adoption for risk management and forecasting
+    \item Integration with DeFi ecosystems
+\end{itemize}
+
+\subsection{Competitive Landscape}
+
+\subsubsection{Centralized Platforms}
+\textbf{Polymarket}
+\begin{itemize}
+    \item Strengths: Excellent UX, high liquidity, mainstream adoption
+    \item Weaknesses: Centralized market creation, regulatory risk, limited market types
+    \item Market position: Dominant in crypto-native prediction markets
+\end{itemize}
+
+\textbf{Kalshi}
+\begin{itemize}
+    \item Strengths: US regulatory compliance, traditional finance integration
+    \item Weaknesses: Limited to CFTC-approved markets, high barriers to entry
+    \item Market position: Regulated US prediction markets
+\end{itemize}
+
+\subsubsection{Decentralized Platforms}
+\textbf{UMA Protocol}
+\begin{itemize}
+    \item Strengths: Flexible oracle system, established technology
+    \item Weaknesses: Governance token vulnerability (only 5M UMA needed to validate), limited user adoption
+    \item Market position: DeFi-native but struggling with scalability
+\end{itemize}
+
+\textbf{Augur}
+\begin{itemize}
+    \item Strengths: Fully decentralized, pioneering technology
+    \item Weaknesses: Poor UX, high gas costs, limited liquidity
+    \item Market position: Early pioneer but largely superseded
+\end{itemize}
+
+\subsection{Competitive Advantages}
+
+\subsubsection{Technical Differentiation}
+\begin{enumerate}
+    \item \textbf{Oracle Trilemma Solution}: zkTLS provides trustless, fast, and flexible data verification
+    \item \textbf{AI-Powered Creation}: Enables market creation at unprecedented scale
+    \item \textbf{Multi-Agent Architecture}: Separate validation, creation, and resolution for robust quality control
+\end{enumerate}
+
+\subsubsection{User Experience Innovation}
+\begin{enumerate}
+    \item \textbf{Natural Language Interface}: Create markets with simple prompts
+    \item \textbf{Social-First Design}: Markets as entertainment and social objects
+    \item \textbf{Gamified Progression}: User advancement through quality participation
+\end{enumerate}
+
+\subsubsection{Economic Model Innovation}
+\begin{enumerate}
+    \item \textbf{Quality-Based Economics}: Fees and rewards tied to market quality
+    \item \textbf{Creator Economy}: Sustainable revenue for market creators
+    \item \textbf{Bootstrapped Liquidity}: Systematic approach to cold start problem
+\end{enumerate}
+
+\section{Technical Architecture}
+
+\subsection{System Overview}
+Mentat Protocol employs a multi-layer architecture optimized for Solana's high-throughput environment:
+
+% TODO: Add system architecture diagram
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{figures/system-architecture.png}
+    \caption{Mentat Protocol System Architecture}
+    \label{fig:system-architecture}
+\end{figure}
+
+\subsection{Multi-Agent System}
+
+\subsubsection{Agent Types and Responsibilities}
+
+\textbf{Creation Agent}
+\begin{itemize}
+    \item Parses natural language user prompts
+    \item Maps requirements to zkTLS-verifiable sources
+    \item Generates structured market parameters
+    \item Creates unambiguous resolution criteria
+\end{itemize}
+
+\textbf{Validation Agent}
+\begin{itemize}
+    \item Evaluates market quality across multiple dimensions
+    \item Performs duplicate detection and deduplication
+    \item Assigns quality scores and risk assessments
+    \item Implements configurable quality thresholds
+\end{itemize}
+
+\textbf{Resolution Agent}
+\begin{itemize}
+    \item Monitors target data sources continuously
+    \item Generates zkTLS proofs upon trigger conditions
+    \item Coordinates multi-source verification
+    \item Manages dispute periods and challenges
+\end{itemize}
+
+\textbf{Dispute Agent}
+\begin{itemize}
+    \item Processes counter-evidence and disputes
+    \item Coordinates community resolution mechanisms
+    \item Handles edge cases and error correction
+    \item Manages re-resolution when necessary
+\end{itemize}
+
+\subsubsection{Agent Coordination Protocol}
+[TO BE COMPLETED - Technical details of agent communication, state management, and consensus mechanisms]
+
+\subsection{zkTLS Integration}
+
+\subsubsection{Proof Generation Pipeline}
+The resolution process follows a standardized pipeline:
+\begin{enumerate}
+    \item Source monitoring for trigger conditions
+    \item Cryptographic proof generation via TLSNotary
+    \item Multi-source verification and aggregation
+    \item 24-hour dispute period for challenges
+    \item Final settlement with proof verification
+\end{enumerate}
+
+\subsubsection{Supported Data Sources}
+\begin{itemize}
+    \item News sources (Reuters, AP, Bloomberg, BBC)
+    \item Financial APIs (CoinGecko, traditional market data)
+    \item Government data (SEC filings, federal announcements)
+    \item Social media (Twitter, Reddit via APIs)
+    \item Corporate sources (press releases, earnings reports)
+\end{itemize}
+
+\subsubsection{Security Model}
+[TO BE COMPLETED - zkTLS security assumptions, attack vectors, mitigation strategies]
+
+\subsection{Solana Integration}
+
+\subsubsection{On-Chain Components}
+\begin{itemize}
+    \item Market creation and parameter storage
+    \item Trading mechanism and position tracking
+    \item Settlement and fee distribution
+    \item zkTLS proof verification
+\end{itemize}
+
+\subsubsection{Off-Chain Coordination}
+A parallel coordination network handles:
+\begin{itemize}
+    \item AI agent communication and state management
+    \item Quality scoring and validation processes
+    \item zkTLS proof generation and aggregation
+    \item Social features and user interaction data
+\end{itemize}
+
+\subsubsection{State Synchronization}
+[TO BE COMPLETED - Rollup mechanisms, state compression, batch processing]
+
+\section{AI and Quality Framework}
+
+\subsection{Natural Language Processing}
+[TO BE COMPLETED - AI models, fine-tuning approaches, accuracy benchmarks]
+
+\subsection{Quality Scoring System}
+
+The quality framework evaluates markets across five dimensions:
+
+\subsubsection{Ambiguity Score (30\% weight)}
+Measures resolution criteria clarity:
+\begin{itemize}
+    \item Precision of language and terminology
+    \item Measurability of outcomes
+    \item Temporal clarity and deadlines
+    \item Source specification and availability
+    \item Edge case coverage
+\end{itemize}
+
+\subsubsection{Relevance Score (25\% weight)}
+Assesses market importance and interest potential:
+\begin{itemize}
+    \item Topic popularity and search volume
+    \item Stakeholder impact assessment
+    \item Media coverage analysis
+    \item Financial significance evaluation
+    \item Time sensitivity factors
+\end{itemize}
+
+\subsubsection{Intent Score (25\% weight)}
+Detects malicious or spam content:
+\begin{itemize}
+    \item Spam pattern recognition
+    \item Manipulation attempt detection
+    \item Content appropriateness evaluation
+    \item Creator reputation analysis
+\end{itemize}
+
+\subsubsection{Source Reliability (15\% weight)}
+Evaluates zkTLS source quality:
+\begin{itemize}
+    \item Source tier classification
+    \item Historical reliability tracking
+    \item Technical compatibility verification
+    \item Update frequency analysis
+\end{itemize}
+
+\subsubsection{Uniqueness Score (5\% weight)}
+Prevents market duplication:
+\begin{itemize}
+    \item Semantic similarity detection
+    \item Source overlap analysis
+    \item Timeline intersection evaluation
+    \item Market consolidation suggestions
+\end{itemize}
+
+\subsection{Configuration and Governance}
+All quality parameters are governance-configurable, enabling:
+\begin{itemize}
+    \item Dynamic threshold adjustment
+    \item A/B testing of scoring algorithms
+    \item Community-driven parameter optimization
+    \item Specialized scoring for market categories
+\end{itemize}
+
+\section{Economic Model}
+
+\subsection{Token Economics}
+
+\subsubsection{Multi-Token System}
+\begin{itemize}
+    \item \textbf{MENTAT}: Governance and staking token
+    \item \textbf{Trading Assets}: SOL, USDC, and other SPL tokens
+    \item \textbf{Reward Distribution}: MENTAT-based incentive system
+\end{itemize}
+
+\subsubsection{Value Accrual Mechanisms}
+[TO BE COMPLETED - Token utility, value capture, distribution schedules]
+
+\subsection{Stakeholder Economics}
+
+\subsubsection{Market Creators}
+\textbf{Revenue Streams:}
+\begin{itemize}
+    \item Trading fees: 0.5-2\% of market volume
+    \item Quality bonuses for high-scoring markets
+    \item Volume-based escalating rewards
+    \item First-mover advantages in new categories
+\end{itemize}
+
+\textbf{Requirements and Costs:}
+\begin{itemize}
+    \item Staking requirement: 100-1000 MENTAT per market
+    \item Quality slashing: 10-50\% for poor performance
+    \item Gas and operational costs
+\end{itemize}
+
+\subsubsection{Traders}
+\textbf{Incentives:}
+\begin{itemize}
+    \item Early trader bonuses: 5-20\% fee rebates
+    \item Liquidity mining rewards
+    \item Referral program: 10\% of referred user fees
+    \item Accuracy streak bonuses
+\end{itemize}
+
+\subsubsection{Validators and Agents}
+\textbf{Revenue Sources:}
+\begin{itemize}
+    \item Agent operation fees
+    \item Quality validation rewards
+    \item Resolution bounties
+    \item Dispute resolution incentives
+\end{itemize}
+
+\subsection{Bootstrap Strategy}
+
+\subsubsection{Phase 1: Liquidity Seeding (Months 1-3)}
+\begin{itemize}
+    \item Initial liquidity provision: \$500k across seed markets
+    \item Creator incentives: 0\% platform fees
+    \item User acquisition: Free trading for new users
+    \item Reward distribution: 5,000 MENTAT monthly
+\end{itemize}
+
+\subsubsection{Phase 2: Growth Acceleration (Months 4-12)}
+[TO BE COMPLETED - Growth phase economics and incentive adjustments]
+
+\subsubsection{Phase 3: Self-Sustaining Operations (Year 2+)}
+[TO BE COMPLETED - Mature economic model and sustainability metrics]
+
+\section{Go-to-Market Strategy}
+
+\subsection{Target Market Segmentation}
+
+\subsubsection{Primary Target: Crypto Natives}
+\begin{itemize}
+    \item Demographic: DeFi users, crypto traders, prediction market participants
+    \item Value proposition: Technical innovation and decentralization
+    \item Acquisition channels: Crypto Twitter, Discord communities, conferences
+    \item Success metrics: 10,000+ monthly active users by month 6
+\end{itemize}
+
+\subsubsection{Secondary Target: Mainstream Prediction Enthusiasts}
+[TO BE COMPLETED - Mainstream user acquisition strategy]
+
+\subsection{Partnership Strategy}
+
+\subsubsection{Technology Partners}
+\begin{itemize}
+    \item zkTLS providers (TLSNotary, zkPass)
+    \item AI/ML platforms (OpenAI, Anthropic, Hugging Face)
+    \item Solana ecosystem (Helius, QuickNode, Jupiter)
+    \item DeFi protocols (Orca, Marinade, Meteora)
+\end{itemize}
+
+\subsubsection{Data Source Partners}
+[TO BE COMPLETED - News organizations, data providers, API partnerships]
+
+\subsubsection{Distribution Partners}
+[TO BE COMPLETED - Platform integrations, embedded widgets, affiliate programs]
+
+\subsection{Marketing and Community Building}
+
+\subsubsection{Content Strategy}
+[TO BE COMPLETED - Educational content, use case demonstrations, thought leadership]
+
+\subsubsection{Community Development}
+[TO BE COMPLETED - Discord, governance participation, creator programs]
+
+\section{Risk Analysis}
+
+\subsection{Technical Risks}
+
+\subsubsection{zkTLS Technology Maturity}
+\textbf{Risk}: Early-stage technology with potential reliability issues
+\textbf{Mitigation}:
+\begin{itemize}
+    \item Multi-provider integration strategy
+    \item Fallback resolution mechanisms
+    \item Conservative source selection initially
+\end{itemize}
+
+\subsubsection{AI Model Reliability}
+\textbf{Risk}: Quality degradation, prompt injection, hallucination
+\textbf{Mitigation}:
+\begin{itemize}
+    \item Multi-agent validation architecture
+    \item Constitutional AI constraints
+    \item Human oversight for high-stakes markets
+\end{itemize}
+
+\subsubsection{Scalability Constraints}
+[TO BE COMPLETED - Network congestion, cost scaling, performance limitations]
+
+\subsection{Regulatory Risks}
+
+\subsubsection{Jurisdiction-Specific Restrictions}
+\textbf{Risk}: Regulatory restrictions in key markets
+\textbf{Mitigation}:
+\begin{itemize}
+    \item Decentralized protocol architecture
+    \item Geographic content filtering
+    \item Legal compliance framework
+\end{itemize}
+
+\subsubsection{Market Creation Liability}
+[TO BE COMPLETED - Platform vs protocol liability, content moderation requirements]
+
+\subsection{Market Risks}
+
+\subsubsection{Competition from Established Players}
+[TO BE COMPLETED - Competitive response scenarios, differentiation maintenance]
+
+\subsubsection{Adoption and Network Effects}
+[TO BE COMPLETED - User acquisition challenges, liquidity bootstrapping risks]
+
+\section{Financial Projections}
+
+\subsection{Revenue Model}
+
+\subsubsection{Revenue Streams}
+\begin{table}[h]
+    \centering
+    \begin{tabular}{@{}lcc@{}}
+        \toprule
+        Revenue Stream & \% of Total & Year 1 Target \\
+        \midrule
+        Trading Fees & 60\% & \$300k \\
+        Creator Stakes & 20\% & \$100k \\
+        Premium Features & 15\% & \$75k \\
+        API/Data Licensing & 5\% & \$25k \\
+        \midrule
+        Total & 100\% & \$500k \\
+        \bottomrule
+    \end{tabular}
+    \caption{Year 1 Revenue Projection by Stream}
+    \label{tab:revenue-streams}
+\end{table}
+
+\subsubsection{Unit Economics}
+[TO BE COMPLETED - Customer acquisition cost, lifetime value, contribution margins]
+
+\subsection{Operational Projections}
+
+\subsubsection{Cost Structure}
+[TO BE COMPLETED - Personnel, infrastructure, token incentives, operational costs]
+
+\subsubsection{Growth Scenarios}
+[TO BE COMPLETED - Conservative, base case, and aggressive growth projections]
+
+\section{Team and Advisors}
+
+\subsection{Core Team}
+[TO BE COMPLETED - Founding team backgrounds, experience, roles]
+
+\subsection{Technical Advisory Board}
+[TO BE COMPLETED - AI/ML advisors, blockchain experts, market design specialists]
+
+\subsection{Business Advisory Board}
+[TO BE COMPLETED - Industry veterans, regulatory experts, business development]
+
+\subsection{Hiring Plan}
+[TO BE COMPLETED - Key positions, timeline, compensation structure]
+
+\section{Roadmap and Milestones}
+
+\subsection{Development Phases}
+
+\subsubsection{Phase 1: Foundation (Months 1-3)}
+\begin{itemize}
+    \item MVP development and testing
+    \item Core team hiring and onboarding
+    \item Initial zkTLS integration
+    \item Security audit and bug bounty program
+\end{itemize}
+
+\subsubsection{Phase 2: Launch and Scale (Months 4-6)}
+[TO BE COMPLETED - Public launch, user acquisition, feature expansion]
+
+\subsubsection{Phase 3: Ecosystem Development (Months 7-12)}
+[TO BE COMPLETED - Partnerships, advanced features, cross-chain expansion]
+
+\subsection{Key Milestones}
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{@{}lll@{}}
+        \toprule
+        Milestone & Timeline & Success Criteria \\
+        \midrule
+        MVP Launch & Month 3 & 1,000+ markets created \\
+        Product-Market Fit & Month 6 & 10,000+ monthly users \\
+        Revenue Sustainability & Month 12 & \$100k+ monthly revenue \\
+        Series A Readiness & Month 18 & \$1M+ monthly volume \\
+        \bottomrule
+    \end{tabular}
+    \caption{Key Development Milestones}
+    \label{tab:milestones}
+\end{table}
+
+\section{Investment Opportunity}
+
+\subsection{Funding Requirements}
+[TO BE COMPLETED - Total funding needed, use of funds breakdown, runway analysis]
+
+\subsection{Investment Terms}
+[TO BE COMPLETED - Valuation, equity structure, investor rights]
+
+\subsection{Use of Funds}
+[TO BE COMPLETED - Development, hiring, marketing, operations allocation]
+
+\subsection{Exit Strategy}
+[TO BE COMPLETED - Strategic acquisition opportunities, IPO timeline, investor returns]
+
+\section{Conclusion}
+
+Mentat Protocol represents a fundamental advancement in prediction market technology, solving the oracle trilemma through innovative application of AI agents and zkTLS. By combining trustless infrastructure with engaging user experience, we are positioned to capture significant market share in the rapidly growing prediction market industry.
+
+The convergence of mature AI models, emerging zkTLS technology, and high-performance blockchain infrastructure creates a unique window of opportunity. Our technical architecture, economic model, and go-to-market strategy are designed to establish Mentat as the dominant platform for permissionless prediction markets.
+
+We invite investors and partners to join us in building the future of collective intelligence and decentralized forecasting.
+
+\newpage
+\appendix
+
+\section{Technical Specifications}
+[TO BE COMPLETED - Detailed technical documentation, API specifications, smart contract interfaces]
+
+\section{Market Research Data}
+[TO BE COMPLETED - Detailed market analysis, user research findings, competitive intelligence]
+
+\section{Financial Models}
+[TO BE COMPLETED - Detailed financial projections, sensitivity analysis, scenario modeling]
+
+\section{Legal and Regulatory Analysis}
+[TO BE COMPLETED - Jurisdiction analysis, compliance framework, regulatory strategy]
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}
