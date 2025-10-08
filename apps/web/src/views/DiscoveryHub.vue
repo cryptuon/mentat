@@ -162,10 +162,21 @@ const selectedChip = ref('All');
 
 .list {
   display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
 }
 
+@media (max-width: 1024px) {
+  .list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 768px) {
+  .list {
+    grid-template-columns: 1fr;
+  }
+
   .markets header {
     flex-direction: column;
     align-items: flex-start;

@@ -14,13 +14,39 @@
       <!-- Left Column: Main info -->
       <div class="detail-left">
         <article class="card market-overview">
-          <div class="market-overview__header">
-            <StatusBadge :intent="statusIntent">{{ market.state.toUpperCase() }}</StatusBadge>
-            <span class="pill">{{ deadline }}</span>
+          <div class="market-overview__visual">
+            <div class="visual-placeholder">
+              <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3a66f5;stop-opacity:0.1" />
+                    <stop offset="100%" style="stop-color:#3a66f5;stop-opacity:0.05" />
+                  </linearGradient>
+                </defs>
+                <rect width="200" height="120" fill="url(#bgGradient)" />
+                <path
+                  :d="`M 0,${120 - (market.outcomes[0].probability * 1.2)} ${chartPath}`"
+                  fill="none"
+                  stroke="#3a66f5"
+                  stroke-width="2.5"
+                  opacity="0.7"
+                />
+                <circle
+                  :cx="200"
+                  :cy="120 - (market.outcomes[0].probability * 1.2)"
+                  r="4"
+                  fill="#3a66f5"
+                />
+              </svg>
+            </div>
+            <div class="market-overview__header">
+              <StatusBadge :intent="statusIntent">{{ market.state.toUpperCase() }}</StatusBadge>
+              <span class="pill">{{ deadline }}</span>
+            </div>
           </div>
 
           <div class="odds-grid">
-            <div v-for="outcome in market.outcomes" :key="outcome.id">
+            <div v-for="outcome in market.outcomes" :key="outcome.id" class="odds-card">
               <label>{{ outcome.label }}</label>
               <strong>{{ outcome.probability }}%</strong>
               <p>{{ outcome.price.toFixed(2) }} USDC</p>
@@ -254,6 +280,18 @@ const volume24h = computed(() =>
 );
 const latestLiquidity = computed(() => latestPoint.value?.liquidity ?? market.value?.liquidity.poolSize ?? 0);
 
+const chartPath = computed(() => {
+  if (!market.value) return '';
+  const prob = market.value.outcomes[0].probability;
+  const points = [
+    `L 50,${120 - (prob * 0.8)}`,
+    `L 100,${120 - (prob * 1.0)}`,
+    `L 150,${120 - (prob * 1.1)}`,
+    `L 200,${120 - (prob * 1.2)}`
+  ];
+  return points.join(' ');
+});
+
 const formatCurrency = (amount: number) => {
   if (amount >= 1_000_000) {
     return `${(amount / 1_000_000).toFixed(1)}M USDC`;
@@ -308,41 +346,94 @@ function onReact(_id: string) {
 
 .market-overview {
   display: grid;
-  gap: 1.25rem;
+  gap: 1.5rem;
+  overflow: hidden;
+}
+
+.market-overview__visual {
+  position: relative;
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.visual-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.8;
+}
+
+.visual-placeholder svg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .market-overview__header {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 0.75rem;
+  padding: 1rem;
+  margin: -1.5rem -1.5rem 0;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.95), transparent);
 }
 
 .odds-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+  margin-top: -1rem;
 }
 
-.odds-grid div {
-  background: rgba(255, 255, 255, 0.03);
+.odds-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fc 100%);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  padding: 1rem;
+  padding: 1.25rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.odds-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-accent);
 }
 
 .odds-grid label {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
 }
 
 .odds-grid strong {
-  font-size: 1.8rem;
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--color-accent) 0%, #5080ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .odds-grid p {
-  margin: 0.35rem 0 0;
+  margin: 0;
   color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .liquidity {
