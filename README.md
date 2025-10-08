@@ -1,100 +1,44 @@
 # Mentat Protocol
 
-> Fully permissionless prediction markets powered by AI agents and zkTLS
+AI-native prediction markets on Solana, resolved by zkTLS proofs and bootstrapped with curator-verified agent workflows.
 
-## Overview
+## Vision
+- **Permissionless creation:** AI assistants draft market questions, resolution criteria, and liquidity terms so anyone can launch high-quality markets with minimal friction.
+- **Cryptographic settlement:** zkTLS proofs bridge real-world data into Solana smart contracts, replacing trusted arbiters with verifiable outcomes.
+- **Fanatical usability:** A pump.fun-inspired, Arrakis-flavored UX couples rapid deployment with transparent discovery, proof timelines, and curator guardrails.
 
-Mentat Protocol enables anyone to create prediction markets through AI agents that automatically generate markets and resolve them using cryptographic proofs. No trusted intermediaries, no governance tokens to attack - just pure cryptographic truth.
+## Core Product Pillars
+- **AI-assisted market studio:** Conversational UI backed by OpenAI/Anthropic models, with human-in-the-loop curation prior to on-chain deployment.
+- **zkTLS resolution pipeline:** Off-chain proof generation, optional aggregation, and on-chain verification contracts that finalize markets once proofs land.
+- **Discovery & trading hub:** Real-time feed, topic filters, and detail pages highlighting resolution rules, data sources, and proof status.
 
-## Core Innovation
+## Success Signals (v0)
+- Time from AI prompt to on-chain market: ≤ 5 minutes.
+- Human curator acceptance rate: ≥ 70 %.
+- Markets launched per day: dozens without elevated dispute rates.
+- Resolution latency after event settles: ≤ 30 minutes from proof submission.
 
-**AI + zkTLS Architecture**
-- **AI Agents**: Handle permissionless market creation at scale
-- **zkTLS Proofs**: Provide cryptographic proof of real-world outcomes
-- **Multi-Agent System**: Separate agents for creation, validation, and resolution
+## Phased Roadmap
+1. **MVP (Solana-only, human-curated):** Ship creator studio, curator queue, base market program, and proof stub that records hashes.
+2. **Scale:** Add multi-source proofs, automated proof ingestion, richer market taxonomy, and ranked discovery.
+3. **Full permissionless:** Expand agent autonomy, enable dynamic source discovery, and harden dispute + governance loops.
 
-## Key Features
-
-### 🤖 Permissionless Market Creation
-- Anyone can prompt AI to create markets
-- Multi-agent validation ensures quality
-- Economic staking prevents spam
-
-### 🔒 Trustless Resolution
-- zkTLS proves "this data came from source X at time Y"
-- No reliance on governance tokens or human oracles
-- Cryptographic verification on-chain
-
-### ⚡ Solana-Native
-- Built on Solana for speed and low costs
-- Parallel network for agent coordination
-- Batch rollups for efficient settlement
-
-### 💰 Economic Incentives
-- Market creators earn trading fees + quality bonuses
-- Liquidity providers receive yield + early trader rewards
-- Validators earn transaction fees + governance emissions
-
-## How It Works
-
-1. **Market Creation**: User prompts AI agent to create a market
-2. **Quality Validation**: Separate agent scores for ambiguity, relevance, and intent
-3. **Market Launch**: High-quality markets go live on parallel network
-4. **Trading**: Users trade on predictions with bootstrapped liquidity
-5. **Resolution**: AI monitors sources and generates zkTLS proofs
-6. **Settlement**: Cryptographic proof settles market automatically
-
-## Architecture
-
-```
-User Prompt → Creation Agent → Validation Agent → Market Launch
-                    ↓
-zkTLS Sources ← Resolution Agent ← Active Markets
-                    ↓
-Parallel Network → Rollup Batch → Solana Mainnet
-```
-
-## Quality Framework
-
-Markets are scored on:
-- **Ambiguity**: Resolution criteria clarity
-- **Relevance**: Market interest and importance
-- **Intent**: Spam and manipulation detection
-- **Source Reliability**: zkTLS source quality
-- **Uniqueness**: Deduplication checks
-
-Low-quality markets are marked but not censored - staying truly permissionless.
+## Repository Structure
+- `docs/product-overview.md` — detailed narrative of the vision, user journeys, and UX priorities.
+- `docs/implementation-plan.md` — implementation milestones, strike team ownership, and delivery timeline.
+- `docs/tokenomics.md` — protocol fee flows, staking mechanics, and incentive design.
+- `docs/market-standard.md` — canonical market data model and lifecycle rules.
+- `docs/solana-market-schema.md` — on-chain account definitions aligned with the market standard.
+- `docs/fee-model.md` — quantitative model illustrating fee splits and projected revenue.
+- `docs/project-structure.md` — proposed repository layout and component responsibilities.
+- `docs/web-prototype.md` — guide to the Vue-based UI prototype with mock data.
+- `specs.md` — original ideation reference.
 
 ## Getting Started
-
-```bash
-# Clone the repository
-git clone https://github.com/your-org/mentat-protocol
-cd mentat-protocol
-
-# Install dependencies
-npm install
-
-# Start local development
-npm run dev
-```
-
-## Documentation
-
-- [Architecture](./docs/architecture.md) - Technical system design
-- [Economic Model](./docs/economics.md) - Incentives and tokenomics
-- [Quality Framework](./docs/quality.md) - Market scoring system
-- [Agent Coordination](./docs/agents.md) - Multi-agent workflows
-- [zkTLS Integration](./docs/zktls.md) - Proof generation and verification
-
-## Contributing
-
-We welcome contributions! Please see our [Contributing Guide](./docs/contributing.md) for details.
-
-## License
-
-MIT License - see [LICENSE](./LICENSE) for details.
+1. Read the product overview for context on the end-to-end flow.
+2. Align on implementation milestones and staffing.
+3. Begin MVP execution: creator studio, curation, Solana program, and zkTLS proof stub.
 
 ---
 
-*"The future of prediction markets is permissionless, trustless, and powered by AI"*
+Questions or clarifications? Open an issue describing the scenario and which pillar is impacted (AI studio, proofing, or discovery).
