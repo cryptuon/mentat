@@ -1,15 +1,14 @@
 <template>
-  <div class="page">
-    <TopBar
-      title="Ledger of Arrakis"
-      subtitle="Spice flows, stakes locked, alerts from the desert."
-      :help-topic="'overview'"
+  <div class="view-content">
+    <PageHeader
+      title="My activity"
+      subtitle="Track balances, open stakes, and service alerts across your markets."
     >
       <template #actions>
-        <button class="ghost">Manage notifications</button>
+        <button class="ghost">Notifications</button>
         <button class="cta">Withdraw rewards</button>
       </template>
-    </TopBar>
+    </PageHeader>
 
     <section class="grid two">
       <MetricCard
@@ -24,7 +23,9 @@
 
     <section class="grid two">
       <article class="card holdings">
-        <h2>Active spice stakes</h2>
+        <div class="card__title">
+          <h2>Open stakes</h2>
+        </div>
         <ul>
           <li v-for="market in markets" :key="market.id">
             <div>
@@ -37,14 +38,16 @@
       </article>
 
       <article class="card alerts">
-        <h2>Sietch alerts</h2>
+        <div class="card__title">
+          <h2>Alerts</h2>
+        </div>
         <div class="alert">
           <StatusBadge intent="warning">Action needed</StatusBadge>
           <p>Proof on market-2 due in 48 min.</p>
         </div>
         <div class="alert">
           <StatusBadge intent="success">All good</StatusBadge>
-          <p>No disputes. Avg resolution beating SLA.</p>
+          <p>No disputes pending. Average resolution within SLA.</p>
         </div>
       </article>
     </section>
@@ -54,7 +57,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
-import TopBar from '@/components/TopBar.vue';
+import PageHeader from '@/components/PageHeader.vue';
 import MetricCard from '@/components/MetricCard.vue';
 import StatusBadge from '@/components/StatusBadge.vue';
 import { fetchCreatorMetrics, fetchActiveMarkets } from '@/services/mockApi';
@@ -74,12 +77,6 @@ const markets = computed(() => (marketQuery.value ?? []).slice(0, 4));
 </script>
 
 <style scoped>
-.page {
-  display: flex;
-  flex-direction: column;
-  gap: 2.5rem;
-}
-
 .holdings ul {
   list-style: none;
   margin: 0;
@@ -94,8 +91,8 @@ const markets = computed(() => (marketQuery.value ?? []).slice(0, 4));
   gap: 1rem;
   padding: 1rem;
   border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--color-border);
+  background: #fff;
 }
 
 .holdings strong {
@@ -108,16 +105,19 @@ const markets = computed(() => (marketQuery.value ?? []).slice(0, 4));
   font-size: 0.9rem;
 }
 
+.holdings,
 .alerts {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
 }
 
 .alert {
   display: grid;
   gap: 0.5rem;
-  background: rgba(255, 255, 255, 0.03);
+  background: #fff;
   border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
   padding: 1rem;
 }
 

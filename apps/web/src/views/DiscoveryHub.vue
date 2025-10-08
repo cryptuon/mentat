@@ -1,192 +1,179 @@
 <template>
-  <div class="page">
-    <TopBar
-      title="Arrakeen Feed"
-      subtitle="Fresh spice bets. Ride the dune or fade it."
-      :help-topic="'trader'"
+  <div class="view-content">
+    <PageHeader
+      title="Markets"
+      subtitle="Explore liquid, self-resolving markets. Pick a trend or start your own."
     >
       <template #actions>
-        <button class="ghost">Filters</button>
-        <button class="cta">Summon Market</button>
+        <button class="ghost">Categories</button>
+        <button class="cta">Create market</button>
       </template>
-    </TopBar>
+    </PageHeader>
 
-    <section class="hero card">
-      <div class="hero__copy">
-        <h2>Spice is flowing</h2>
-        <ul>
-          <li>Real odds. No Guild middlemen.</li>
-          <li>zkTLS receipts prove every whisper.</li>
-          <li>Share the sietch. Fees flow like melange.</li>
-        </ul>
-        <div class="hero__tags">
-          <span class="pill">AI curated</span>
-          <span class="pill">Truth trance verified</span>
-          <span class="pill">Solana speed</span>
-        </div>
-        <button class="ghost hero__learn" @click="openHelp('overview')">Learn more</button>
-      </div>
-      <div class="hero__carousel">
-        <article
-          v-for="market in featuredMarkets"
-          :key="market.id"
-          class="hero__slide"
+    <section class="filters card">
+      <input type="search" placeholder="Search markets, topics, tickers..." />
+      <div class="filters__chips">
+        <button
+          v-for="chip in chips"
+          :key="chip"
+          class="chip"
+          :class="{ active: selectedChip === chip }"
+          @click="selectedChip = chip"
         >
-          <p class="hero__deadline">
-            Resolves {{ deadlineLabel(market.resolutionDeadline) }}
-          </p>
-          <h3>{{ market.question }}</h3>
-          <p>{{ market.summary }}</p>
-          <RouterLink :to="`/market/${market.id}`" class="cta hero__cta">
-            View market
-          </RouterLink>
-        </article>
+          {{ chip }}
+        </button>
       </div>
     </section>
 
-    <section class="section">
-      <div class="section-heading">
-        <h2>Spice storms 🔥</h2>
-        <span class="pill">Auto-refreshing</span>
+    <section class="stats">
+      <div class="stats__card">
+        <span>Total volume (24h)</span>
+        <strong>12.4M USDC</strong>
       </div>
-      <div class="grid three">
+      <div class="stats__card">
+        <span>Markets live</span>
+        <strong>128</strong>
+      </div>
+      <div class="stats__card">
+        <span>Average fee</span>
+        <strong>2.0%</strong>
+      </div>
+      <div class="stats__card">
+        <span>Proofs on time</span>
+        <strong>94%</strong>
+      </div>
+    </section>
+
+    <section class="markets">
+      <header>
+        <h2>Trending markets</h2>
+        <div class="markets__actions">
+          <button class="ghost">24h Volume</button>
+          <button class="ghost">Resolving soon</button>
+        </div>
+      </header>
+
+      <div class="list">
         <MarketCard v-for="market in activeMarkets" :key="market.id" :market="market" />
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="section-heading">
-        <h2>Guild metrics</h2>
-        <span class="pill">Updated hourly</span>
-      </div>
-      <div class="grid two">
-        <MetricCard
-          title="Active markets"
-          value="128"
-          :delta="14"
-          delta-label="vs. last week"
-        />
-        <MetricCard
-          title="Proofs within SLA"
-          value="94%"
-          :delta="4"
-          delta-label="vs. 30d average"
-        />
-        <MetricCard
-          title="Invalid rate"
-          value="1.2%"
-          :delta="-0.6"
-          delta-label="vs. 90d average"
-        />
-        <MetricCard
-          title="Total volume (24h)"
-          value="12.4M USDC"
-          :delta="18"
-          delta-label="vs. prior 24h"
-        />
       </div>
     </section>
   </div>
 </template>
 
 <script setup lang="ts">
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
-import TopBar from '@/components/TopBar.vue';
+import PageHeader from '@/components/PageHeader.vue';
 import MarketCard from '@/components/MarketCard.vue';
-import MetricCard from '@/components/MetricCard.vue';
-import { useHelpStore, type HelpTopic } from '@/stores/help';
-import { fetchFeaturedMarkets, fetchActiveMarkets } from '@/services/mockApi';
-
-dayjs.extend(relativeTime);
-
-const { data: featuredQuery } = useQuery({
-  queryKey: ['featured-markets'],
-  queryFn: fetchFeaturedMarkets
-});
+import { fetchActiveMarkets } from '@/services/mockApi';
 
 const { data: activeQuery } = useQuery({
   queryKey: ['active-markets'],
   queryFn: fetchActiveMarkets
 });
 
-const featuredMarkets = computed(() => featuredQuery.value ?? []);
 const activeMarkets = computed(() => activeQuery.value ?? []);
 
-const deadlineLabel = (iso: string) => dayjs(iso).fromNow();
-const help = useHelpStore();
-const openHelp = (topic: HelpTopic) => help.show(topic);
+const chips = ['All', 'Crypto', 'Politics', 'Economy', 'Tech', 'Sports'];
+const selectedChip = ref('All');
 </script>
 
 <style scoped>
-.page {
-  display: flex;
-  flex-direction: column;
-  gap: 2.5rem;
-}
-
-.hero {
+.filters {
   display: grid;
-  gap: 2rem;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  align-items: center;
+  gap: 0.65rem;
 }
 
-.hero__copy h2 {
-  margin: 0;
-  font-size: 2rem;
+.filters input {
+  width: 100%;
+  padding: 0.55rem 0.95rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  font-size: 0.9rem;
 }
 
-.hero__copy ul {
-  margin: 0.75rem 0 0;
-  padding-left: 1.2rem;
-  color: var(--color-text-secondary);
-  display: grid;
-  gap: 0.35rem;
-}
-
-.hero__tags {
+.filters__chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 1.5rem;
+  gap: 0.5rem;
 }
 
-.hero__carousel {
-  display: grid;
-  gap: 1.25rem;
-}
-
-.hero__learn {
-  margin-top: 1rem;
-  padding: 0.45rem 1rem;
-  font-size: 0.8rem;
-}
-
-.hero__slide {
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: var(--radius-lg);
-  padding: 1.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  display: grid;
-  gap: 0.75rem;
-}
-
-.hero__deadline {
-  margin: 0;
+.chip {
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: #fff;
   color: var(--color-text-secondary);
-  font-size: 0.85rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: border 0.2s ease, color 0.2s ease, background 0.2s ease;
 }
 
-.hero__cta {
-  justify-self: start;
+.chip.active {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  background: rgba(58, 102, 245, 0.08);
 }
 
-.section {
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+}
+
+.stats__card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.stats__card span {
+  font-size: 0.7rem;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stats__card strong {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.markets header {
   display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.markets h2 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.markets__actions {
+  display: flex;
+  gap: 0.65rem;
+}
+
+.list {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .markets header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .markets__actions {
+    flex-wrap: wrap;
+  }
 }
 </style>

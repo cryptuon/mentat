@@ -1,34 +1,34 @@
 <template>
   <section class="card social">
     <header>
-      <h2>Spice signals</h2>
+      <h2>Community activity</h2>
       <div class="actions">
-        <button class="ghost" @click="$emit('onBoost')">Boost market</button>
+        <button class="ghost" @click="$emit('onBoost')">Boost</button>
         <button class="ghost" @click="$emit('onShare')">Share</button>
       </div>
     </header>
 
     <div class="stats">
       <div>
-        <label>Watchers</label>
+        <span>Watchers</span>
         <strong>{{ social.watchers }}</strong>
       </div>
       <div>
-        <label>Boosts</label>
+        <span>Boosts</span>
         <strong>{{ social.boosts }}</strong>
       </div>
       <div>
-        <label>Shares</label>
+        <span>Shares</span>
         <strong>{{ social.shares }}</strong>
       </div>
       <div>
-        <label>Comments</label>
+        <span>Comments</span>
         <strong>{{ social.comments }}</strong>
       </div>
     </div>
 
     <div class="backers" v-if="social.topBackers.length">
-      <span>Top backers:</span>
+      <span>Top backers</span>
       <div class="chips">
         <span class="pill" v-for="alias in social.topBackers" :key="alias">{{ alias }}</span>
       </div>
@@ -73,7 +73,7 @@ defineProps<{
   };
 }>();
 
-const emit = defineEmits<{ (e: 'onBoost'): void; (e: 'onShare'): void; (e: 'onReact', id: string): void }>();
+defineEmits<{ (e: 'onBoost'): void; (e: 'onShare'): void; (e: 'onReact', id: string): void }>();
 
 const formatRelative = (iso: string) => dayjs(iso).fromNow();
 </script>
@@ -102,17 +102,19 @@ header {
 
 .stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   gap: 1rem;
 }
 
-.stats label {
-  font-size: 0.8rem;
+.stats span {
+  font-size: 0.78rem;
   color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .stats strong {
-  font-size: 1.4rem;
+  font-size: 1.3rem;
 }
 
 .backers {
@@ -135,7 +137,8 @@ header {
 }
 
 .thread {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: 1rem;
   display: grid;
@@ -151,6 +154,8 @@ header {
 
 .thread p {
   margin: 0;
+  color: var(--color-text-primary);
+  font-size: 0.95rem;
 }
 
 .thread footer {

@@ -3,13 +3,13 @@
 The Vue 3 playground under `apps/web` demonstrates the Mentat UI flows with mock data and abstractions aligned to the product spec. Use it to validate messaging, layout, and navigation before wiring real APIs.
 
 ## Features
-- **Arrakeen Feed:** Featured carousel, trending grid, and KPI cards with spice-seasoned copy.
-- **Mentat Forge:** Conversational draft interface with structured preview tied to the market schema.
-- **Sardaukar Gate:** Review queue with status indicators, validation findings, and approval actions.
+- **Markets view:** Filters, search, and a trending list of live markets.
+- **Create market:** Conversational draft interface with structured preview tied to the market schema.
+- **Curate markets:** Review queue with status indicators, validation findings, and approval actions.
 - **Market Detail:** Comprehensive breakdown of odds, liquidity, resolution criteria, fee economics, truth-trance proof timeline, live charts, and social signals.
-- **Truth Trance:** Active job table and submission form illustrating zkTLS workflow messaging.
-- **Ledger of Arrakis:** Creator metrics, stakes overview, and alert examples.
-- **Help overlay:** Global quick tips (Dune-flavored) for creators, curators, traders, and proof ops.
+- **Proof operations:** Active job table and submission form illustrating zkTLS workflow messaging.
+- **My activity:** Creator metrics, stakes overview, and alert examples.
+- **Help overlay:** Global quick tips for creators, curators, traders, and proof ops.
 
 All data is sourced from `src/services/mockApi.ts`, which exports promise-returning functions mimicking real backend calls.
 

@@ -22,8 +22,9 @@ const intent = props.intent ?? 'default';
   text-transform: uppercase;
   padding: 0.35rem 0.75rem;
   border-radius: 999px;
-  border: 1px solid transparent;
-  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--color-border);
+  background: #fff;
+  color: var(--color-text-secondary);
 }
 
 .status--success {

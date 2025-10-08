@@ -5,7 +5,7 @@ AI-native prediction markets on Solana, resolved by zkTLS proofs and bootstrappe
 ## Vision
 - **Permissionless creation:** AI assistants draft market questions, resolution criteria, and liquidity terms so anyone can launch high-quality markets with minimal friction.
 - **Cryptographic settlement:** zkTLS proofs bridge real-world data into Solana smart contracts, replacing trusted arbiters with verifiable outcomes.
-- **Fanatical usability:** A pump.fun-inspired, Arrakis-flavored UX couples rapid deployment with transparent discovery, proof timelines, and curator guardrails.
+- **Fanatical usability:** A Polymarket-inspired UX couples rapid deployment with transparent discovery, proof timelines, and curator guardrails.
 
 ## Core Product Pillars
 - **AI-assisted market studio:** Conversational UI backed by OpenAI/Anthropic models, with human-in-the-loop curation prior to on-chain deployment.

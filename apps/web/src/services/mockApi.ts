@@ -46,7 +46,7 @@ const mockMarkets: MarketDetail[] = Array.from({ length: 12 }).map((_, idx) => {
     id: `market-${idx + 1}`,
     question: `Will headline event ${idx + 1} happen before ${resolutionDeadline.format('MMM D')}?`,
     summary:
-      'Mentat-drafted clause citing Reuters, Bloomberg, and the official transcript so even the Spacing Guild agrees.',
+      'Assistant-drafted clause citing Reuters, Bloomberg, and the official transcript for parity across sources.',
     state,
     category: ['Politics', idx % 2 === 0 ? 'US' : 'Global'],
     creator: idx % 3 === 0 ? '0xAI343' : '0xMentat',
@@ -117,7 +117,7 @@ const mockMarkets: MarketDetail[] = Array.from({ length: 12 }).map((_, idx) => {
       boosts: randomInt(10, 140),
       shares: randomInt(25, 320),
       comments: randomInt(6, 42),
-      topBackers: ['AtreidesDAO', 'FremenFlow', 'SpiceAngels'].slice(0, randomInt(1, 3)),
+      topBackers: ['MacroFund', 'MarketMakers', 'SignalDesk'].slice(0, randomInt(1, 3)),
       threads: [
         {
           id: `thread-${idx}-1`,
@@ -159,14 +159,14 @@ const mockDrafts: DraftDetail[] = Array.from({ length: 6 }).map((_, idx) => {
       .add(10 + idx, 'day')
       .format('MMM D')}?`,
     aiNotes:
-      'Template v1.3. Sources cross-checked with past disputes so the Reverend Mothers won’t object.',
+      'Template v1.3. Sources cross-checked with past disputes to avoid ambiguity.',
     validationFindings: [
       'Resolution clause references exact press release wording.',
       'Timestamp window aligned with trading halt.',
       idx % 2 ? 'Needs fallback source for redundancy.' : 'Fallback source confirmed.'
     ],
     resolutionSuggestion:
-      'Resolve YES if the official domain posts; otherwise NO when the Arrakeen sun sets on the deadline.',
+      'Resolve YES if the official domain posts; otherwise NO at the stated deadline.',
     economics: {
       tradingFee: 2.0,
       creatorStake: 50,
@@ -191,25 +191,25 @@ const mockProofJobs: ProofJob[] = Array.from({ length: 5 }).map((_, idx) => ({
 
 const mockCreatorMetrics: CreatorMetric[] = [
   {
-    title: 'Markets summoned (30d)',
+    title: 'Markets launched (30d)',
     value: '42',
     delta: 18,
     deltaLabel: 'vs. prior 30d'
   },
   {
-    title: 'Sardaukar approval',
+    title: 'Approval rate',
     value: '76%',
     delta: 6,
     deltaLabel: 'higher than target'
   },
   {
-    title: 'Truth trance time',
+    title: 'Avg resolution time',
     value: '42m',
     delta: -12,
     deltaLabel: 'vs. SLA'
   },
   {
-    title: 'Spice earned',
+    title: 'Fees earned',
     value: '9,450 USDC',
     delta: 22,
     deltaLabel: 'vs. last month'

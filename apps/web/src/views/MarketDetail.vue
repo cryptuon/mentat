@@ -1,59 +1,38 @@
 <template>
-  <div class="page" v-if="market">
-    <TopBar
+  <div v-if="market" class="view-content">
+    <PageHeader
       :title="market.question"
       :subtitle="summary"
-      :help-topic="'trader'"
     >
       <template #actions>
         <button class="ghost" @click="shareMarket">Share</button>
-        <button class="cta">Enter market</button>
+        <button class="cta">Trade</button>
       </template>
-    </TopBar>
+    </PageHeader>
 
-    <section class="grid main-grid">
-      <article class="card market-overview">
-        <header>
-          <StatusBadge :intent="statusIntent">{{ market.state.toUpperCase() }}</StatusBadge>
-          <span class="pill">Resolution deadline: {{ deadline }}</span>
-        </header>
-
-        <div class="odds-grid">
-          <div v-for="outcome in market.outcomes" :key="outcome.id">
-            <label>{{ outcome.label }}</label>
-            <strong>{{ outcome.probability }}%</strong>
-            <p>{{ outcome.price.toFixed(2) }} USDC</p>
+    <div class="detail-layout">
+      <!-- Left Column: Main info -->
+      <div class="detail-left">
+        <article class="card market-overview">
+          <div class="market-overview__header">
+            <StatusBadge :intent="statusIntent">{{ market.state.toUpperCase() }}</StatusBadge>
+            <span class="pill">{{ deadline }}</span>
           </div>
-        </div>
 
-        <section class="liquidity">
-          <h3>Spice pool</h3>
-          <div class="liquidity__grid">
-            <div>
-              <span>Pool size</span>
-              <strong>{{ formatCurrency(market.liquidity.poolSize) }}</strong>
-            </div>
-            <div>
-              <span>YES shares</span>
-              <strong>{{ formatCurrency(market.liquidity.yesShares) }}</strong>
-            </div>
-            <div>
-              <span>NO shares</span>
-              <strong>{{ formatCurrency(market.liquidity.noShares) }}</strong>
-            </div>
-            <div>
-              <span>LP APY</span>
-              <strong>{{ market.liquidity.apy }}%</strong>
+          <div class="odds-grid">
+            <div v-for="outcome in market.outcomes" :key="outcome.id">
+              <label>{{ outcome.label }}</label>
+              <strong>{{ outcome.probability }}%</strong>
+              <p>{{ outcome.price.toFixed(2) }} USDC</p>
             </div>
           </div>
-        </section>
-      </article>
+        </article>
 
-      <article class="card chart-card">
-        <header>
-          <h2>Price sands</h2>
+        <article class="card chart-card">
+        <div class="card__title">
+          <h2>Price history</h2>
           <span class="pill">24h</span>
-        </header>
+        </div>
         <div class="chart-container">
           <SparklineChart :points="chartPoints" :height="160" />
         </div>
@@ -83,103 +62,129 @@
         </div>
       </article>
 
-      <article class="card resolution">
-        <h2>Resolution rules</h2>
-        <div class="resolution__grid">
-          <section>
-            <h3>Primary sources</h3>
-            <ul>
-              <li v-for="source in market.resolutionCriteria.primarySources" :key="source">
-                {{ source }}
-              </li>
-            </ul>
-          </section>
-          <section>
-            <h3>Trigger logic</h3>
-            <p>{{ market.resolutionCriteria.triggerLogic }}</p>
-            <h3>Fallback</h3>
-            <p>{{ market.resolutionCriteria.fallbackLogic }}</p>
-          </section>
-          <section>
-            <h3>Invalidation clause</h3>
-            <p>{{ market.resolutionCriteria.invalidationClause }}</p>
-          </section>
-        </div>
-      </article>
+        <article class="card rationale">
+          <h2>Market rationale</h2>
+          <p>{{ market.aiRationale }}</p>
+        </article>
 
-      <ProofTimeline
-        class="proof"
-        :status="market.proofStatus.status"
-        :proof-sla-minutes="market.proofSlaMinutes"
-        :deadline-iso="market.timeline.resolutionDeadline"
-        :submitted-at-iso="market.proofStatus.submittedAt"
-        :proof-hash="market.proofStatus.proofHash"
-        :verifier="market.proofStatus.verifier"
-      />
+        <article class="card resolution">
+          <h2>Resolution rules</h2>
+          <div class="resolution__grid">
+            <section>
+              <h3>Primary sources</h3>
+              <ul>
+                <li v-for="source in market.resolutionCriteria.primarySources" :key="source">
+                  {{ source }}
+                </li>
+              </ul>
+            </section>
+            <section>
+              <h3>Trigger logic</h3>
+              <p>{{ market.resolutionCriteria.triggerLogic }}</p>
+              <h3>Fallback</h3>
+              <p>{{ market.resolutionCriteria.fallbackLogic }}</p>
+            </section>
+            <section>
+              <h3>Invalidation clause</h3>
+              <p>{{ market.resolutionCriteria.invalidationClause }}</p>
+            </section>
+          </div>
+        </article>
 
-      <article class="card economics">
-        <h2>Fee split</h2>
-        <div class="economics__grid">
-          <div>
-            <span>Trading fee</span>
-            <strong>{{ market.feeBreakdown.tradingFee }}%</strong>
-            <p>LP {{ market.feeBreakdown.lpShare }}% · Creator {{ market.feeBreakdown.creatorShare }}% · Treasury {{ market.feeBreakdown.treasuryShare }}%</p>
-          </div>
-          <div>
-            <span>Settlement fee</span>
-            <strong>{{ market.feeBreakdown.settlementFee }}%</strong>
-            <p>Feeds proof bounty + treasury.</p>
-          </div>
-          <div>
-            <span>Open interest</span>
-            <strong>{{ formatCurrency(market.openInterest) }}</strong>
-          </div>
-          <div>
-            <span>24h volume</span>
-            <strong>{{ formatCurrency(market.volume24h) }}</strong>
-          </div>
-        </div>
-      </article>
+        <MarketSocial
+          :social="market.social"
+          class="social-card"
+          @onBoost="onBoost"
+          @onShare="shareMarket"
+          @onReact="onReact"
+        />
+      </div>
 
-      <article class="card timeline">
-        <h2>Key timestamps</h2>
-        <div class="timeline__grid">
-          <div>
-            <span>Created</span>
-            <strong>{{ formatDate(market.timeline.createdAt) }}</strong>
+      <!-- Right Sidebar: Stats & Info -->
+      <aside class="detail-sidebar">
+        <article class="card liquidity">
+          <h3>Liquidity</h3>
+          <div class="liquidity__grid">
+            <div>
+              <span>Pool size</span>
+              <strong>{{ formatCurrency(market.liquidity.poolSize) }}</strong>
+            </div>
+            <div>
+              <span>YES shares</span>
+              <strong>{{ formatCurrency(market.liquidity.yesShares) }}</strong>
+            </div>
+            <div>
+              <span>NO shares</span>
+              <strong>{{ formatCurrency(market.liquidity.noShares) }}</strong>
+            </div>
+            <div>
+              <span>LP APY</span>
+              <strong>{{ market.liquidity.apy }}%</strong>
+            </div>
           </div>
-          <div>
-            <span>Opened</span>
-            <strong>{{ formatDate(market.timeline.openAt) }}</strong>
-          </div>
-          <div v-if="market.timeline.lockAt">
-            <span>Trading lock</span>
-            <strong>{{ formatDate(market.timeline.lockAt) }}</strong>
-          </div>
-          <div>
-            <span>Resolution deadline</span>
-            <strong>{{ formatDate(market.timeline.resolutionDeadline) }}</strong>
-          </div>
-          <div>
-            <span>Dispute window</span>
-            <strong>{{ market.timeline.disputeWindowHours }} hours</strong>
-          </div>
-        </div>
-      </article>
+        </article>
 
-      <article class="card rationale">
-        <h2>Mentat rationale</h2>
-        <p>{{ market.aiRationale }}</p>
-      </article>
+        <ProofTimeline
+          class="proof-widget"
+          :status="market.proofStatus.status"
+          :proof-sla-minutes="market.proofSlaMinutes"
+          :deadline-iso="market.timeline.resolutionDeadline"
+          :submitted-at-iso="market.proofStatus.submittedAt"
+          :proof-hash="market.proofStatus.proofHash"
+          :verifier="market.proofStatus.verifier"
+        />
 
-      <MarketSocial
-        :social="market.social"
-        class="social-card"
-        @onBoost="onBoost"
-        @onShare="shareMarket"
-        @onReact="onReact"
-      />
-    </section>
+        <article class="card economics">
+          <h2>Fee breakdown</h2>
+          <div class="economics__grid">
+            <div>
+              <span>Trading fee</span>
+              <strong>{{ market.feeBreakdown.tradingFee }}%</strong>
+              <p>LP {{ market.feeBreakdown.lpShare }}% · Creator {{ market.feeBreakdown.creatorShare }}% · Treasury {{ market.feeBreakdown.treasuryShare }}%</p>
+            </div>
+            <div>
+              <span>Settlement fee</span>
+              <strong>{{ market.feeBreakdown.settlementFee }}%</strong>
+              <p>Feeds proof bounty + treasury.</p>
+            </div>
+            <div>
+              <span>Open interest</span>
+              <strong>{{ formatCurrency(market.openInterest) }}</strong>
+            </div>
+            <div>
+              <span>24h volume</span>
+              <strong>{{ formatCurrency(market.volume24h) }}</strong>
+            </div>
+          </div>
+        </article>
+
+        <article class="card timeline">
+          <h2>Timeline</h2>
+          <div class="timeline__grid">
+            <div>
+              <span>Created</span>
+              <strong>{{ formatDate(market.timeline.createdAt) }}</strong>
+            </div>
+            <div>
+              <span>Opened</span>
+              <strong>{{ formatDate(market.timeline.openAt) }}</strong>
+            </div>
+            <div v-if="market.timeline.lockAt">
+              <span>Trading lock</span>
+              <strong>{{ formatDate(market.timeline.lockAt) }}</strong>
+            </div>
+            <div>
+              <span>Resolution deadline</span>
+              <strong>{{ formatDate(market.timeline.resolutionDeadline) }}</strong>
+            </div>
+            <div>
+              <span>Dispute window</span>
+              <strong>{{ market.timeline.disputeWindowHours }} hours</strong>
+            </div>
+          </div>
+        </article>
+      </aside>
+    </div>
   </div>
   <div v-else class="loading">
     Loading market…
@@ -191,7 +196,7 @@ import dayjs from 'dayjs';
 import { computed } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
 import { useRoute } from 'vue-router';
-import TopBar from '@/components/TopBar.vue';
+import PageHeader from '@/components/PageHeader.vue';
 import ProofTimeline from '@/components/ProofTimeline.vue';
 import StatusBadge from '@/components/StatusBadge.vue';
 import SparklineChart from '@/components/SparklineChart.vue';
@@ -280,27 +285,38 @@ function onReact(_id: string) {
 </script>
 
 <style scoped>
-.page {
+.detail-layout {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.detail-left {
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
-}
-
-.main-grid {
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 2rem;
-}
-
-.market-overview {
-  grid-column: span 2;
-  display: grid;
   gap: 1.5rem;
 }
 
-.market-overview header {
+.detail-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: sticky;
+  top: 1rem;
+}
+
+.market-overview {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.market-overview__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
 .odds-grid {
@@ -330,36 +346,48 @@ function onReact(_id: string) {
 }
 
 .liquidity {
-  display: grid;
-  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.liquidity h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 .liquidity__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 1rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.liquidity__grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 .liquidity__grid span {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.liquidity__grid strong {
+  font-size: 1.1rem;
 }
 
 .chart-card {
   display: grid;
-  gap: 1.25rem;
-  grid-column: span 2;
-}
-
-.chart-card header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  gap: 1rem;
 }
 
 .chart-container {
   width: 100%;
-  height: 180px;
+  height: 200px;
 }
 
 .chart-stats {
@@ -392,15 +420,31 @@ function onReact(_id: string) {
 }
 
 .resolution {
-  grid-column: span 2;
   display: grid;
-  gap: 1.25rem;
+  gap: 1rem;
+}
+
+.resolution h2 {
+  margin: 0;
+  font-size: 1.15rem;
 }
 
 .resolution__grid {
   display: grid;
-  gap: 1.25rem;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+.resolution__grid section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.resolution__grid h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .resolution__grid ul {
@@ -408,56 +452,111 @@ function onReact(_id: string) {
   padding-left: 1.2rem;
   color: var(--color-text-secondary);
   display: grid;
-  gap: 0.5rem;
+  gap: 0.35rem;
+  font-size: 0.9rem;
 }
 
-.proof {
-  grid-column: span 1;
+.resolution__grid p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+
+.proof-widget {
+  /* Inherits from ProofTimeline component */
 }
 
 .economics {
-  display: grid;
-  gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.economics h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 .economics__grid {
   display: grid;
-  gap: 1rem;
+  gap: 0.75rem;
+}
+
+.economics__grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 .economics__grid span {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.economics__grid strong {
+  font-size: 1.1rem;
 }
 
 .economics__grid p {
-  margin: 0.35rem 0 0;
+  margin: 0.2rem 0 0;
   color: var(--color-text-secondary);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
 }
 
 .timeline {
-  display: grid;
-  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.timeline h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 .timeline__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
+  gap: 0.75rem;
+}
+
+.timeline__grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 .timeline__grid span {
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.timeline__grid strong {
+  font-size: 0.9rem;
 }
 
 .rationale {
-  grid-column: span 2;
+  /* Inherits card styling */
+}
+
+.rationale h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.15rem;
+}
+
+.rationale p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
 }
 
 .social-card {
-  grid-column: span 2;
+  /* Inherits from MarketSocial component */
 }
 
 .loading {
@@ -467,70 +566,36 @@ function onReact(_id: string) {
 }
 
 @media (max-width: 1024px) {
-  .market-overview,
-  .chart-card,
-  .resolution,
-  .rationale,
-  .social-card {
-    grid-column: span 1;
+  .detail-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-sidebar {
+    position: static;
   }
 }
 
-@media (max-width: 900px) {
-  .main-grid {
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .market-overview header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
-  }
-
+@media (max-width: 768px) {
   .chart-stats {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .odds-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .liquidity__grid {
+    grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 640px) {
-  .main-grid {
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
-  }
-
   .odds-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .liquidity__grid,
-  .timeline__grid,
-  .chart-stats {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .resolution__grid {
-    grid-template-columns: 1fr;
-  }
-
-  .actions {
-    flex-wrap: wrap;
-  }
-}
-
-@media (max-width: 460px) {
-  .odds-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .liquidity__grid,
-  .chart-stats,
-  .timeline__grid {
     grid-template-columns: 1fr;
   }
 
   .chart-container {
-    height: 140px;
+    height: 160px;
   }
 }
 </style>

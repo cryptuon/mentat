@@ -1,25 +1,21 @@
 <template>
-  <div class="page">
-    <TopBar
-      title="Truth Trance"
-      subtitle="Channel proofs like a Bene Gesserit. Bounties await."
-      :help-topic="'proof'"
+  <div class="view-content">
+    <PageHeader
+      title="Proof operations"
+      subtitle="Claim zkTLS jobs, submit artifacts, and keep resolutions on schedule."
     >
       <template #actions>
-        <button class="ghost">View crysknife playbook</button>
-        <button class="cta">Claim new job</button>
+        <button class="ghost">Playbook</button>
+        <button class="cta">Claim job</button>
       </template>
-    </TopBar>
+    </PageHeader>
 
     <section class="grid two">
       <article class="card jobs">
-        <header>
+        <div class="card__title">
           <h2>Active jobs</h2>
-          <div class="jobs__meta">
-            <span class="pill">SLA live</span>
-            <button class="ghost" @click="openHelp">Tips</button>
-          </div>
-        </header>
+          <span class="pill">SLA live</span>
+        </div>
         <table>
           <thead>
             <tr>
@@ -47,8 +43,10 @@
       </article>
 
       <article class="card submit">
-        <h2>Submit proof</h2>
-        <p>Drop CID + hash. Keep transcript ready in case of disputes.</p>
+        <div class="card__title">
+          <h2>Submit proof</h2>
+        </div>
+        <p>Fill in the proof artifact and TLS hash. Keep transcripts handy in case of disputes.</p>
         <form class="form">
           <label>
             Market
@@ -66,12 +64,12 @@
 
           <label>
             TLS transcript hash
-            <input placeholder="0x…" />
+            <input placeholder="0x..." />
           </label>
 
           <label>
             Notes
-            <textarea placeholder="Optional heads-up for the squad." />
+            <textarea placeholder="Optional context for reviewers" />
           </label>
 
           <div class="actions">
@@ -88,13 +86,9 @@
 import dayjs from 'dayjs';
 import { computed } from 'vue';
 import { useQuery } from '@tanstack/vue-query';
-import TopBar from '@/components/TopBar.vue';
+import PageHeader from '@/components/PageHeader.vue';
 import StatusBadge from '@/components/StatusBadge.vue';
-import { useHelpStore } from '@/stores/help';
 import { fetchProofJobs } from '@/services/mockApi';
-
-const help = useHelpStore();
-const openHelp = () => help.show('proof');
 
 const { data: proofJobs } = useQuery({
   queryKey: ['proof-jobs'],
@@ -106,55 +100,56 @@ const formatDeadline = (iso: string) => dayjs(iso).format('MMM D, HH:mm');
 </script>
 
 <style scoped>
-.page {
-  display: flex;
-  flex-direction: column;
-  gap: 2.5rem;
-}
-
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  overflow-x: auto;
+  display: block;
+}
+
+thead,
+tbody,
+tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
 }
 
 th,
 td {
-  padding: 0.75rem;
+  padding: 0.65rem 0.5rem;
   text-align: left;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid var(--color-border);
 }
 
 th {
   color: var(--color-text-secondary);
-  font-weight: 500;
-  font-size: 0.85rem;
+  font-weight: 600;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.jobs {
-  display: grid;
-  gap: 1.5rem;
-}
-
-.jobs__meta {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-
-.jobs__meta .ghost {
-  padding: 0.35rem 0.8rem;
-  font-size: 0.75rem;
-}
-
+.jobs,
 .submit {
-  display: grid;
-  gap: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.jobs .card__title {
+  margin-bottom: 0.5rem;
+}
+
+.submit .card__title {
+  margin-bottom: 0;
 }
 
 .submit p {
   margin: 0;
   color: var(--color-text-secondary);
+  font-size: 0.9rem;
 }
 
 .form {
@@ -164,18 +159,18 @@ th {
 
 label {
   display: grid;
-  gap: 0.5rem;
+  gap: 0.45rem;
   font-size: 0.9rem;
 }
 
 input,
 select,
 textarea {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #fff;
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: 0.75rem;
-  color: inherit;
+  font-size: 0.95rem;
 }
 
 textarea {
@@ -187,5 +182,30 @@ textarea {
   display: flex;
   gap: 0.75rem;
   justify-content: flex-end;
+}
+
+@media (max-width: 1024px) {
+  .grid.two {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  table {
+    font-size: 0.8rem;
+  }
+
+  th,
+  td {
+    padding: 0.5rem 0.35rem;
+  }
+
+  th:first-child,
+  td:first-child {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 </style>

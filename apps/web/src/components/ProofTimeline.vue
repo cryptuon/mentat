@@ -1,7 +1,7 @@
 <template>
-    <div class="timeline card">
-      <header>
-        <h4>Truth trance timeline</h4>
+  <div class="timeline card">
+    <header>
+      <h4>Proof timeline</h4>
       <StatusBadge :intent="badgeIntent">{{ statusLabel }}</StatusBadge>
     </header>
 
@@ -19,11 +19,11 @@
         <strong>{{ submittedAt }}</strong>
       </div>
       <div class="timeline__row" v-if="proofHash">
-        <span>Spice hash</span>
+        <span>Proof hash</span>
         <code>{{ proofHash }}</code>
       </div>
       <div class="timeline__row" v-if="verifier">
-        <span>Truthsayer</span>
+        <span>Verifier</span>
         <strong>{{ verifier }}</strong>
       </div>
     </div>
@@ -49,10 +49,10 @@ const props = defineProps<{
 }>();
 
 const statusLabelMap: Record<ProofStatus, string> = {
-  awaiting: 'Awaiting trance',
-  submitted: 'Spice queued',
-  verified: 'Truth sealed',
-  disputed: 'Challenged'
+  awaiting: 'Awaiting proof',
+  submitted: 'Submitted',
+  verified: 'Verified',
+  disputed: 'Disputed'
 };
 
 const statusIntentMap: Record<ProofStatus, 'default' | 'success' | 'warning' | 'danger'> = {
@@ -108,8 +108,8 @@ h4 {
 code {
   padding: 0.4rem 0.6rem;
   border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.06);
+  background: #f0f2f9;
   font-family: 'Roboto Mono', monospace;
-  font-size: 0.85rem;
+  font-size: 0.84rem;
 }
 </style>
