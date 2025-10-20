@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@tanstack/vue-query": "^5.0.0",
+    "axios": "^1.6.5",
     "dayjs": "^1.11.10",
     "pinia": "^2.1.7",
     "vue": "^3.4.0",

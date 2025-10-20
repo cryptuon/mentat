@@ -22,8 +22,16 @@
       </nav>
 
       <div class="actions">
-        <button class="ghost">Sign in</button>
-        <button class="cta">Connect Wallet</button>
+        <template v-if="authStore.isAuthenticated">
+          <RouterLink to="/account" class="nav__link user-link">
+            {{ authStore.user?.username || authStore.user?.wallet_address.slice(0, 8) }}
+          </RouterLink>
+          <button class="ghost" @click="handleLogout">Sign out</button>
+        </template>
+        <template v-else>
+          <button class="ghost" @click="openAuthModal('login')">Sign in</button>
+          <button class="cta" @click="openAuthModal('register')">Connect Wallet</button>
+        </template>
       </div>
 
       <button class="menu" @click="toggleMobileNav" aria-label="Toggle navigation">
@@ -47,19 +55,35 @@
         <RouterLink to="/proofs" @click="closeMobile" :class="{ active: route.path.startsWith('/proofs') }">
           Proof Ops
         </RouterLink>
-        <button class="ghost">Sign in</button>
-        <button class="cta">Connect Wallet</button>
+        <template v-if="authStore.isAuthenticated">
+          <RouterLink to="/account" @click="closeMobile" :class="{ active: route.path.startsWith('/account') }">
+            {{ authStore.user?.username || authStore.user?.wallet_address.slice(0, 8) }}
+          </RouterLink>
+          <button class="ghost" @click="handleLogout">Sign out</button>
+        </template>
+        <template v-else>
+          <button class="ghost" @click="openAuthModal('login')">Sign in</button>
+          <button class="cta" @click="openAuthModal('register')">Connect Wallet</button>
+        </template>
       </nav>
     </transition>
+
+    <AuthModal :is-open="authModalOpen" :initial-mode="authMode" @close="closeAuthModal" @success="handleAuthSuccess" />
   </header>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
+import AuthModal from './AuthModal.vue';
 
 const route = useRoute();
+const authStore = useAuthStore();
+
 const mobileOpen = ref(false);
+const authModalOpen = ref(false);
+const authMode = ref<'login' | 'register'>('login');
 
 function toggleMobileNav() {
   mobileOpen.value = !mobileOpen.value;
@@ -67,6 +91,25 @@ function toggleMobileNav() {
 
 function closeMobile() {
   mobileOpen.value = false;
+}
+
+function openAuthModal(mode: 'login' | 'register') {
+  authMode.value = mode;
+  authModalOpen.value = true;
+  closeMobile();
+}
+
+function closeAuthModal() {
+  authModalOpen.value = false;
+}
+
+function handleAuthSuccess() {
+  closeAuthModal();
+}
+
+function handleLogout() {
+  authStore.logout();
+  closeMobile();
 }
 </script>
 
@@ -136,6 +179,12 @@ function closeMobile() {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+}
+
+.user-link {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--color-accent);
 }
 
 .menu {
