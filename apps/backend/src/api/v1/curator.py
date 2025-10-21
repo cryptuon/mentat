@@ -321,6 +321,226 @@ async def build_draft_response_curator(draft: MarketDraft, curator: User) -> Dra
     )
 
 
+@router.post("/bulk/claim", response_model=dict)
+async def bulk_claim_drafts(
+    draft_ids: list[UUID],
+    current_curator: User = Depends(get_current_curator),
+):
+    """Claim multiple drafts for review."""
+    results = {"success": [], "failed": []}
+
+    for draft_id in draft_ids:
+        try:
+            draft = await MarketDraft.get_or_none(id=draft_id)
+
+            if not draft or draft.status != DraftStatus.PENDING:
+                results["failed"].append({"id": str(draft_id), "reason": "Not available for claiming"})
+                continue
+
+            draft.assigned_curator = current_curator
+            draft.status = DraftStatus.IN_REVIEW
+            await draft.save()
+
+            await CurationAction.create(
+                draft=draft,
+                actor=current_curator,
+                action_type=CurationActionType.CLAIM,
+            )
+
+            results["success"].append(str(draft_id))
+        except Exception as e:
+            results["failed"].append({"id": str(draft_id), "reason": str(e)})
+
+    return results
+
+
+@router.post("/bulk/approve", response_model=dict)
+async def bulk_approve_drafts(
+    draft_ids: list[UUID],
+    curator_notes: Optional[str] = None,
+    current_curator: User = Depends(get_current_curator),
+):
+    """Approve multiple drafts for deployment."""
+    results = {"success": [], "failed": []}
+
+    for draft_id in draft_ids:
+        try:
+            draft = await MarketDraft.get_or_none(id=draft_id).prefetch_related("creator")
+
+            if not draft or draft.status != DraftStatus.IN_REVIEW:
+                results["failed"].append({"id": str(draft_id), "reason": "Not in review status"})
+                continue
+
+            draft.status = DraftStatus.APPROVED
+            draft.approved_at = datetime.utcnow()
+            draft.reviewed_at = datetime.utcnow()
+            draft.curator_notes = curator_notes
+            await draft.save()
+
+            await CurationAction.create(
+                draft=draft,
+                actor=current_curator,
+                action_type=CurationActionType.APPROVE,
+                comment=curator_notes,
+            )
+
+            # Create market
+            market = await create_market_from_draft(draft)
+            draft.market = market
+            await draft.save()
+
+            results["success"].append(str(draft_id))
+        except Exception as e:
+            results["failed"].append({"id": str(draft_id), "reason": str(e)})
+
+    return results
+
+
+@router.post("/bulk/reject", response_model=dict)
+async def bulk_reject_drafts(
+    draft_ids: list[UUID],
+    reason: Optional[str] = None,
+    current_curator: User = Depends(get_current_curator),
+):
+    """Reject multiple drafts."""
+    results = {"success": [], "failed": []}
+
+    for draft_id in draft_ids:
+        try:
+            draft = await MarketDraft.get_or_none(id=draft_id)
+
+            if not draft or draft.status not in [DraftStatus.IN_REVIEW, DraftStatus.PENDING]:
+                results["failed"].append({"id": str(draft_id), "reason": "Cannot reject in current state"})
+                continue
+
+            draft.status = DraftStatus.REJECTED
+            draft.curator_notes = reason or "Bulk rejected by curator"
+            draft.reviewed_at = datetime.utcnow()
+            await draft.save()
+
+            await CurationAction.create(
+                draft=draft,
+                actor=current_curator,
+                action_type=CurationActionType.REJECT,
+                comment=reason,
+            )
+
+            results["success"].append(str(draft_id))
+        except Exception as e:
+            results["failed"].append({"id": str(draft_id), "reason": str(e)})
+
+    return results
+
+
+@router.get("/{draft_id}/diff", response_model=dict)
+async def get_draft_diff(
+    draft_id: UUID,
+    compare_to: Optional[UUID] = Query(None, description="Draft ID to compare with (defaults to parent)"),
+    current_curator: User = Depends(get_current_curator),
+):
+    """Get diff between draft versions."""
+    draft = await MarketDraft.get_or_none(id=draft_id).prefetch_related("parent_draft")
+
+    if not draft:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Draft not found",
+        )
+
+    # Determine comparison draft
+    compare_draft = None
+    if compare_to:
+        compare_draft = await MarketDraft.get_or_none(id=compare_to)
+    elif draft.parent_draft:
+        compare_draft = draft.parent_draft
+
+    if not compare_draft:
+        return {
+            "current": draft.draft_data,
+            "previous": None,
+            "changes": [],
+            "message": "No previous version available",
+        }
+
+    # Calculate diff
+    changes = calculate_draft_changes(compare_draft.draft_data, draft.draft_data)
+
+    return {
+        "current_draft_id": str(draft.id),
+        "previous_draft_id": str(compare_draft.id),
+        "current_version": draft.version,
+        "previous_version": compare_draft.version,
+        "current": draft.draft_data,
+        "previous": compare_draft.draft_data,
+        "changes": changes,
+    }
+
+
+@router.get("/{draft_id}/history", response_model=list[dict])
+async def get_draft_history(
+    draft_id: UUID,
+    current_curator: User = Depends(get_current_curator),
+):
+    """Get version history for a draft."""
+    draft = await MarketDraft.get_or_none(id=draft_id)
+
+    if not draft:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Draft not found",
+        )
+
+    # Get all versions (walk up the parent chain)
+    versions = []
+    current = draft
+
+    while current:
+        versions.append({
+            "id": str(current.id),
+            "version": current.version,
+            "status": current.status,
+            "created_at": current.created_at,
+            "updated_at": current.updated_at,
+            "quality_score": float(current.quality_score) if current.quality_score else None,
+        })
+
+        if current.parent_draft_id:
+            current = await MarketDraft.get_or_none(id=current.parent_draft_id)
+        else:
+            current = None
+
+    return versions
+
+
+def calculate_draft_changes(old_data: dict, new_data: dict) -> list[dict]:
+    """Calculate field-level changes between two draft versions."""
+    changes = []
+
+    # Check all fields in new data
+    for key, new_value in new_data.items():
+        old_value = old_data.get(key)
+
+        if old_value != new_value:
+            changes.append({
+                "field": key,
+                "old_value": old_value,
+                "new_value": new_value,
+                "change_type": "modified" if key in old_data else "added",
+            })
+
+    # Check for removed fields
+    for key in old_data:
+        if key not in new_data:
+            changes.append({
+                "field": key,
+                "old_value": old_data[key],
+                "new_value": None,
+                "change_type": "removed",
+            })
+
+    return changes
+
+
 async def create_market_from_draft(draft: MarketDraft) -> Market:
     """Helper to create Market entity from approved draft."""
     data = draft.draft_data

@@ -49,7 +49,7 @@ async def health_check():
 
 
 # Import and include API routers
-from src.api.v1 import auth, curator, drafts, markets  # noqa: E402
+from src.api.v1 import ai_generation, auth, curator, drafts, markets  # noqa: E402
 
 app.include_router(auth.router, prefix=f"{settings.api_v1_prefix}/auth", tags=["auth"])
 app.include_router(
@@ -58,6 +58,9 @@ app.include_router(
 app.include_router(drafts.router, prefix=f"{settings.api_v1_prefix}/drafts", tags=["drafts"])
 app.include_router(
     curator.router, prefix=f"{settings.api_v1_prefix}/curator", tags=["curator"]
+)
+app.include_router(
+    ai_generation.router, prefix=f"{settings.api_v1_prefix}/ai", tags=["ai-generation"]
 )
 
 
