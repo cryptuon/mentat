@@ -58,7 +58,7 @@ Backend API → Database
 cd apps/ai-agents
 
 # Install dependencies
-pip install -r requirements.txt
+uv sync
 
 # Configure environment
 cp .env.example .env
@@ -406,8 +406,7 @@ apps/ai-agents/
 │   └── config.py             # Configuration
 ├── tests/
 │   └── test_agents.py
-├── requirements.txt
-├── pyproject.toml
+├── pyproject.toml            # Dependencies & project config
 ├── .env.example
 └── README.md
 ```

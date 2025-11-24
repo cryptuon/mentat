@@ -24,9 +24,7 @@ See [M2 Completion Summary](./docs/M2-COMPLETION-SUMMARY.md) for full details.
 ### Backend Setup
 ```bash
 cd apps/backend
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-pip install -r requirements.txt
+uv sync
 make migrate
 make run  # Runs on http://localhost:8000
 ```
@@ -41,11 +39,9 @@ npm run dev  # Runs on http://localhost:5173
 ### AI Agents Setup
 ```bash
 cd apps/ai-agents
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+uv sync
 export OPENAI_API_KEY="your-key"  # or ANTHROPIC_API_KEY
-python examples/quickstart.py
+uv run python examples/quickstart.py
 ```
 
 ## Architecture

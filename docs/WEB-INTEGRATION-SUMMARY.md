@@ -92,7 +92,6 @@ mentat-protocol/
 │   │   │       └── auth.py        # JWT utilities
 │   │   ├── migrations/            # Aerich migrations
 │   │   ├── pyproject.toml
-│   │   ├── requirements.txt
 │   │   ├── Makefile
 │   │   ├── .env.example
 │   │   └── README.md

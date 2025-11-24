@@ -22,6 +22,7 @@
       </nav>
 
       <div class="actions">
+        <WalletConnectButton />
         <template v-if="authStore.isAuthenticated">
           <RouterLink to="/account" class="nav__link user-link">
             {{ authStore.user?.username || authStore.user?.wallet_address.slice(0, 8) }}
@@ -55,6 +56,9 @@
         <RouterLink to="/proofs" @click="closeMobile" :class="{ active: route.path.startsWith('/proofs') }">
           Proof Ops
         </RouterLink>
+        <div class="mobile-nav__wallet">
+          <WalletConnectButton />
+        </div>
         <template v-if="authStore.isAuthenticated">
           <RouterLink to="/account" @click="closeMobile" :class="{ active: route.path.startsWith('/account') }">
             {{ authStore.user?.username || authStore.user?.wallet_address.slice(0, 8) }}
@@ -69,6 +73,7 @@
     </transition>
 
     <AuthModal :is-open="authModalOpen" :initial-mode="authMode" @close="closeAuthModal" @success="handleAuthSuccess" />
+    <WalletModal />
   </header>
 </template>
 
@@ -77,6 +82,8 @@ import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import AuthModal from './AuthModal.vue';
+import WalletConnectButton from './wallet/WalletConnectButton.vue';
+import WalletModal from './wallet/WalletModal.vue';
 
 const route = useRoute();
 const authStore = useAuthStore();
@@ -252,6 +259,21 @@ function handleLogout() {
 
   .mobile-nav a.active {
     color: var(--color-text-primary);
+  }
+
+  .mobile-nav__wallet {
+    display: flex;
+    justify-content: stretch;
+  }
+
+  .mobile-nav__wallet :deep(.wallet-connect-button) {
+    width: 100%;
+  }
+
+  .mobile-nav__wallet :deep(.connect-btn),
+  .mobile-nav__wallet :deep(.wallet-button) {
+    width: 100%;
+    justify-content: center;
   }
 }
 </style>

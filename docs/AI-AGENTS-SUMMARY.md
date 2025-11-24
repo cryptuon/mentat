@@ -176,8 +176,7 @@ apps/ai-agents/
 │   └── config.py                # Settings management
 ├── tests/
 │   └── test_agents.py
-├── requirements.txt             # Dependencies
-├── pyproject.toml               # Project config
+├── pyproject.toml               # Project config & dependencies
 ├── Makefile                     # Common tasks
 ├── .env.example                 # Config template
 ├── .gitignore
@@ -410,7 +409,7 @@ Comprehensive logging with loguru:
 ```bash
 # Install dependencies
 cd apps/ai-agents
-pip install -r requirements.txt
+uv sync
 
 # Configure API key
 cp .env.example .env

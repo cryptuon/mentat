@@ -88,7 +88,7 @@ A complete FastAPI backend with:
 - `src/api/v1/curator.py` - Curator endpoints (with bulk actions)
 - `src/api/v1/ai_generation.py` - AI generation endpoints
 - `migrations/` - Database migrations (Aerich)
-- `requirements.txt` - Dependencies
+- `pyproject.toml` - Dependencies
 - `Makefile` - Convenience commands
 - `README.md` - Setup and usage documentation
 
@@ -115,7 +115,7 @@ A DSPy-based AI agent system for market creation:
 - `src/types.py` - Pydantic type definitions
 - `src/config.py` - Agent configuration
 - `examples/quickstart.py` - Demo script
-- `requirements.txt` - Dependencies
+- `pyproject.toml` - Dependencies
 - `README.md` - Agent documentation
 
 **Agent Pipeline**:
@@ -571,7 +571,7 @@ apps/backend/
 │           ├── curator.py (new)
 │           └── ai_generation.py (new)
 ├── migrations/ (new)
-├── requirements.txt (new)
+├── pyproject.toml (new)
 ├── Makefile (new)
 └── README.md (new)
 ```
@@ -592,7 +592,7 @@ apps/ai-agents/
 │       └── validator.py (new)
 ├── examples/
 │   └── quickstart.py (new)
-├── requirements.txt (new)
+├── pyproject.toml (new)
 └── README.md (new)
 ```
 

@@ -49,7 +49,7 @@ src/
 1. **Install dependencies:**
    ```bash
    cd apps/backend
-   pip install -r requirements.txt
+   uv sync
    ```
 
 2. **Configure environment:**

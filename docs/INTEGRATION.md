@@ -44,7 +44,7 @@ CREATE DATABASE mentat_dev;
 cd apps/backend
 
 # Install Python dependencies
-pip install -r requirements.txt
+uv sync
 
 # Configure environment
 cp .env.example .env

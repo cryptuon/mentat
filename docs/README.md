@@ -54,9 +54,7 @@ Mentat is a prediction market platform built on Solana with AI-powered market cr
 **Backend Setup**
 ```bash
 cd apps/backend
-python -m venv venv
-source venv/bin/activate  # or `venv\Scripts\activate` on Windows
-pip install -r requirements.txt
+uv sync
 make migrate
 make run
 ```
@@ -72,11 +70,9 @@ npm run dev
 **AI Agents Setup**
 ```bash
 cd apps/ai-agents
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+uv sync
 export OPENAI_API_KEY="your-key"  # or ANTHROPIC_API_KEY
-python examples/quickstart.py
+uv run python examples/quickstart.py
 ```
 See `apps/ai-agents/README.md` for details.
 

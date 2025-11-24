@@ -21,12 +21,8 @@ cd mentat-protocol
 ```bash
 cd apps/backend
 
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-
 # Install dependencies
-pip install -r requirements.txt
+uv sync
 
 # Configure environment
 cp .env.example .env
@@ -67,18 +63,14 @@ Open http://localhost:5173 in your browser. You should see the Discovery Hub.
 ```bash
 cd apps/ai-agents
 
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate
-
 # Install dependencies
-pip install -r requirements.txt
+uv sync
 
 # Configure API key
 export OPENAI_API_KEY="sk-..."  # or ANTHROPIC_API_KEY="sk-ant-..."
 
 # Test agents
-python examples/quickstart.py
+uv run python examples/quickstart.py
 ```
 
 ## Using the Platform
@@ -339,10 +331,8 @@ npm install
 **Backend**:
 ```bash
 cd apps/backend
-rm -rf venv
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+rm -rf .venv
+uv sync
 ```
 
 ### AI Agent Errors
