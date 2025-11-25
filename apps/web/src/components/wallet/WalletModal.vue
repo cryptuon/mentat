@@ -4,7 +4,12 @@
       <div v-if="isOpen" class="modal-overlay" @click="close">
         <div class="modal-container" @click.stop>
           <div class="modal-header">
-            <h2 class="modal-title">Connect Wallet</h2>
+            <div class="modal-title-section">
+              <h2 class="modal-title">Connect Wallet</h2>
+              <div v-if="network.isTestnet" class="modal-network-badge" :style="{ '--network-color': network.color }">
+                {{ network.displayName }}
+              </div>
+            </div>
             <button @click="close" class="close-btn" aria-label="Close">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -111,9 +116,11 @@
 import { ref, computed, inject } from 'vue';
 import { useWalletStore } from '../../stores/wallet';
 import type { WalletAdapter } from '../../stores/wallet';
+import { CURRENT_NETWORK } from '@/config/network';
 
 const walletStore = useWalletStore();
 const wallets = inject<WalletAdapter[]>('wallets', []);
+const network = CURRENT_NETWORK;
 
 const isOpen = computed(() => walletStore.walletModalOpen);
 const connecting = computed(() => walletStore.connecting);
@@ -178,11 +185,29 @@ const handleConnect = async (wallet: WalletAdapter) => {
   border-bottom: 1px solid #e5e7eb;
 }
 
+.modal-title-section {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 .modal-title {
   font-size: 1.25rem;
   font-weight: 700;
   color: #111827;
   margin: 0;
+}
+
+.modal-network-badge {
+  padding: 0.25rem 0.6rem;
+  background: var(--network-color);
+  color: white;
+  border-radius: 0.375rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .close-btn {

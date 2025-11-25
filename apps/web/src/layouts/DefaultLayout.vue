@@ -1,5 +1,6 @@
 <template>
   <div class="app-shell">
+    <TestnetBanner />
     <AppHeader />
     <main class="page-container">
       <slot />
@@ -8,6 +9,7 @@
 </template>
 
 <script setup lang="ts">
+import TestnetBanner from '@/components/TestnetBanner.vue';
 import AppHeader from '@/components/AppHeader.vue';
 </script>
 

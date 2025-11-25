@@ -22,17 +22,10 @@
       </nav>
 
       <div class="actions">
+        <!-- Network indicator for testnet awareness -->
+        <NetworkIndicator />
+        <!-- Wallet connection for on-chain trading -->
         <WalletConnectButton />
-        <template v-if="authStore.isAuthenticated">
-          <RouterLink to="/account" class="nav__link user-link">
-            {{ authStore.user?.username || authStore.user?.wallet_address.slice(0, 8) }}
-          </RouterLink>
-          <button class="ghost" @click="handleLogout">Sign out</button>
-        </template>
-        <template v-else>
-          <button class="ghost" @click="openAuthModal('login')">Sign in</button>
-          <button class="cta" @click="openAuthModal('register')">Connect Wallet</button>
-        </template>
       </div>
 
       <button class="menu" @click="toggleMobileNav" aria-label="Toggle navigation">
@@ -56,23 +49,13 @@
         <RouterLink to="/proofs" @click="closeMobile" :class="{ active: route.path.startsWith('/proofs') }">
           Proof Ops
         </RouterLink>
-        <div class="mobile-nav__wallet">
+        <div class="mobile-nav__actions">
+          <NetworkIndicator />
           <WalletConnectButton />
         </div>
-        <template v-if="authStore.isAuthenticated">
-          <RouterLink to="/account" @click="closeMobile" :class="{ active: route.path.startsWith('/account') }">
-            {{ authStore.user?.username || authStore.user?.wallet_address.slice(0, 8) }}
-          </RouterLink>
-          <button class="ghost" @click="handleLogout">Sign out</button>
-        </template>
-        <template v-else>
-          <button class="ghost" @click="openAuthModal('login')">Sign in</button>
-          <button class="cta" @click="openAuthModal('register')">Connect Wallet</button>
-        </template>
       </nav>
     </transition>
 
-    <AuthModal :is-open="authModalOpen" :initial-mode="authMode" @close="closeAuthModal" @success="handleAuthSuccess" />
     <WalletModal />
   </header>
 </template>
@@ -80,17 +63,12 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { useAuthStore } from '@/stores/auth';
-import AuthModal from './AuthModal.vue';
+import NetworkIndicator from './NetworkIndicator.vue';
 import WalletConnectButton from './wallet/WalletConnectButton.vue';
 import WalletModal from './wallet/WalletModal.vue';
 
 const route = useRoute();
-const authStore = useAuthStore();
-
 const mobileOpen = ref(false);
-const authModalOpen = ref(false);
-const authMode = ref<'login' | 'register'>('login');
 
 function toggleMobileNav() {
   mobileOpen.value = !mobileOpen.value;
@@ -98,25 +76,6 @@ function toggleMobileNav() {
 
 function closeMobile() {
   mobileOpen.value = false;
-}
-
-function openAuthModal(mode: 'login' | 'register') {
-  authMode.value = mode;
-  authModalOpen.value = true;
-  closeMobile();
-}
-
-function closeAuthModal() {
-  authModalOpen.value = false;
-}
-
-function handleAuthSuccess() {
-  closeAuthModal();
-}
-
-function handleLogout() {
-  authStore.logout();
-  closeMobile();
 }
 </script>
 
@@ -261,19 +220,25 @@ function handleLogout() {
     color: var(--color-text-primary);
   }
 
-  .mobile-nav__wallet {
+  .mobile-nav__actions {
     display: flex;
-    justify-content: stretch;
+    flex-direction: column;
+    gap: 0.75rem;
   }
 
-  .mobile-nav__wallet :deep(.wallet-connect-button) {
+  .mobile-nav__actions :deep(.wallet-connect-button) {
     width: 100%;
   }
 
-  .mobile-nav__wallet :deep(.connect-btn),
-  .mobile-nav__wallet :deep(.wallet-button) {
+  .mobile-nav__actions :deep(.connect-btn),
+  .mobile-nav__actions :deep(.wallet-button) {
     width: 100%;
     justify-content: center;
+  }
+
+  .mobile-nav__actions :deep(.network-indicator) {
+    width: fit-content;
+    align-self: center;
   }
 }
 </style>

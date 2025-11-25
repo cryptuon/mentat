@@ -1,6 +1,7 @@
 import { ref, onMounted, onUnmounted } from 'vue';
-import { Connection, clusterApiUrl, PublicKey } from '@solana/web3.js';
+import { Connection, PublicKey } from '@solana/web3.js';
 import type { Commitment, ConnectionConfig } from '@solana/web3.js';
+import { CURRENT_NETWORK } from '@/config/network';
 
 export interface UseSolanaOptions {
   endpoint?: string;
@@ -10,7 +11,7 @@ export interface UseSolanaOptions {
 
 export function useSolana(options: UseSolanaOptions = {}) {
   const {
-    endpoint = clusterApiUrl('devnet'),
+    endpoint = CURRENT_NETWORK.endpoint,
     commitment = 'confirmed',
     config = {},
   } = options;
