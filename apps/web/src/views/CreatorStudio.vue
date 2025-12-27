@@ -419,17 +419,21 @@ async function sendMessage() {
   isRefining.value = true;
 
   try {
-    // TODO: Actually call AI refinement API
-    // For now, simulate a response
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    // Call AI refinement API
+    const result = await refineDraft(generationResult.value!, message);
 
     conversationMessages.value.push({
       id: messageIdCounter++,
       role: 'ai',
       author: 'AI Assistant',
-      text: 'I understand you want to refine the market. In production, this would call the AI agents to regenerate based on your feedback.',
+      text: result.message || 'Draft has been refined based on your feedback.',
       time: 'Just now',
     });
+
+    // Update generation result with refined draft
+    if (result.refined_draft) {
+      generationResult.value = result.refined_draft;
+    }
   } catch (err: any) {
     error.value = 'Failed to refine draft';
   } finally {

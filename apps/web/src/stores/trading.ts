@@ -1,3 +1,30 @@
+/**
+ * ============================================================================
+ * IMPLEMENTATION STATUS: SKELETON / BLOCKED
+ * ============================================================================
+ *
+ * This store is waiting for:
+ * 1. ❌ Solana programs deployed to devnet
+ * 2. ❌ SolanaProgramService fully implemented
+ * 3. ❌ Event indexer service running
+ *
+ * Current state:
+ * - ✅ Complete type-safe interface defined
+ * - ✅ All method signatures ready
+ * - ✅ State management structure in place
+ * - ✅ Computed properties for portfolio calculations
+ * - ❌ All methods throw "not yet implemented" errors
+ *
+ * Once dependencies ready:
+ * - Implement executeTrade() using solanaProgramService (line 211)
+ * - Implement addLiquidity() (line 246)
+ * - Implement removeLiquidity() (line 272)
+ * - Implement loadPositions() (line 297)
+ * - Implement loadRecentTrades() (line 326)
+ *
+ * ============================================================================
+ */
+
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import type { PublicKey } from '@solana/web3.js';

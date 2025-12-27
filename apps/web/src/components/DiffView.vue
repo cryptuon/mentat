@@ -129,7 +129,7 @@ async function loadDiff() {
   error.value = null;
 
   try {
-    // TODO: Replace with actual API call
+    // Fetch diff using native fetch (apiClient doesn't handle diff format well)
     const params = new URLSearchParams();
     if (props.compareToId) {
       params.append('compare_to', props.compareToId);

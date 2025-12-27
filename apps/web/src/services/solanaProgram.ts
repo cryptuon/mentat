@@ -1,5 +1,4 @@
 import { Connection, PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
-// TODO: Uncomment once packages are installed
 // import { Program, AnchorProvider, Idl } from '@coral-xyz/anchor';
 import type {
   Market,
@@ -15,6 +14,31 @@ import type {
 import { USDC_DECIMALS, LAMPORTS_PER_USDC } from '@/types/trading';
 
 /**
+ * ============================================================================
+ * IMPLEMENTATION STATUS: SKELETON / BLOCKED
+ * ============================================================================
+ *
+ * This service is waiting for:
+ * 1. ❌ Solana programs to be compiled without errors
+ * 2. ❌ Programs deployed to devnet
+ * 3. ❌ Program IDL files generated
+ * 4. ❌ Program IDs configured in environment
+ *
+ * Once ready:
+ * - Uncomment Anchor imports (line 2)
+ * - Uncomment program instance fields (line 46-47)
+ * - Implement initialize() method (line 64)
+ * - Implement all trade execution methods (lines 101+)
+ *
+ * Current state:
+ * - ✅ Type-safe interfaces defined
+ * - ✅ Method signatures complete
+ * - ✅ Helper functions working (USDC conversion, fee calc)
+ * - ✅ Trade estimation logic (placeholder AMM formula)
+ * - ❌ All transaction methods throw errors
+ *
+ * ============================================================================
+ *
  * Solana Program Service
  *
  * Core service for interacting with Mentat Protocol Solana programs.
@@ -24,13 +48,6 @@ import { USDC_DECIMALS, LAMPORTS_PER_USDC } from '@/types/trading';
  * - Position queries
  * - Market data fetching
  * - Price calculations
- *
- * **Status**: Skeleton implementation - waiting for Solana programs to be deployed
- *
- * **Dependencies**:
- * - Solana programs deployed to devnet
- * - Program IDL files generated
- * - @coral-xyz/anchor package installed
  *
  * Usage:
  * ```typescript

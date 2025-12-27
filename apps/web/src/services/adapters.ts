@@ -1,5 +1,12 @@
 /**
  * Adapters to transform backend API types to frontend types
+ *
+ * Note: Some fields use placeholder values until backend API is enhanced.
+ * These are marked with comments and will be replaced once backend provides:
+ * - 24-hour volume tracking
+ * - Real-time APY calculations
+ * - Historical price data
+ * - Social engagement metrics
  */
 import type { MarketListItem, MarketDetail as ApiMarketDetail } from '@/types/api';
 import type { MarketSummary, MarketDetail, Outcome } from '@/types';
@@ -15,13 +22,13 @@ export function adaptMarketListItem(apiMarket: MarketListItem): MarketSummary {
     state: apiMarket.state as any, // States match
     category: apiMarket.topic_tags,
     creator: apiMarket.creator_wallet,
-    volume24h: apiMarket.total_volume, // TODO: Need 24h volume from backend
+    volume24h: apiMarket.total_volume, // PLACEHOLDER: Using total volume until backend adds 24h tracking
     totalVolume: apiMarket.total_volume,
     openInterest: apiMarket.total_liquidity,
     resolutionDeadline: apiMarket.resolution_deadline || '',
-    proofSlaMinutes: 60, // TODO: Add to backend
-    oddsChange: 0, // TODO: Calculate from price history
-    featured: false, // Will be set by caller
+    proofSlaMinutes: 60, // PLACEHOLDER: Default 60 min until backend adds proof_sla_minutes field
+    oddsChange: 0, // PLACEHOLDER: Need price history endpoint to calculate
+    featured: false, // Will be set by caller (fetchFeaturedMarkets)
     outcomes: apiMarket.outcomes.map(adaptOutcome),
   };
 }
@@ -71,9 +78,9 @@ export function adaptMarketDetail(apiMarket: ApiMarketDetail): MarketDetail {
     },
     liquidity: {
       poolSize: apiMarket.total_liquidity,
-      yesShares: apiMarket.total_liquidity / 2, // TODO: Get real shares from backend
+      yesShares: apiMarket.total_liquidity / 2, // PLACEHOLDER: Equal split until backend adds outcome shares
       noShares: apiMarket.total_liquidity / 2,
-      apy: 12.5, // TODO: Calculate APY from backend
+      apy: 12.5, // PLACEHOLDER: Static 12.5% until backend adds APY calculation
     },
     proofStatus: {
       status: apiMarket.state === 'resolved' ? 'verified' : 'awaiting',
@@ -81,7 +88,7 @@ export function adaptMarketDetail(apiMarket: ApiMarketDetail): MarketDetail {
       proofHash: apiMarket.on_chain_address,
       verifier: undefined,
     },
-    priceHistory: [], // TODO: Add price history endpoint
+    priceHistory: [], // BLOCKED: Need backend price history endpoint
     social: {
       watchers: 0,
       boosts: 0,

@@ -1,11 +1,11 @@
-export type MarketState =
-  | 'draft'
-  | 'pending'
-  | 'active'
-  | 'locked'
-  | 'resolved'
-  | 'invalid'
-  | 'disputed';
+/**
+ * Frontend types for market data
+ * Note: For backend API types, see types/api.ts
+ */
+
+// Import and re-export MarketState from API types (source of truth)
+import type { MarketState as APIMarketState } from './api';
+export type MarketState = APIMarketState;
 
 export interface Outcome {
   id: string;

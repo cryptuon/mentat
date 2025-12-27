@@ -52,16 +52,3 @@ export const AVAILABLE_NETWORKS: Record<NetworkType, NetworkConfig> = {
 
 // Current network configuration
 export const CURRENT_NETWORK: NetworkConfig = AVAILABLE_NETWORKS[VITE_SOLANA_NETWORK];
-
-// Helper to get network badge text
-export function getNetworkBadgeText(network: NetworkConfig): string {
-  if (network.isTestnet) {
-    return network.displayName.toUpperCase();
-  }
-  return '';
-}
-
-// Helper to check if we're on testnet
-export function isTestnetEnvironment(): boolean {
-  return CURRENT_NETWORK.isTestnet;
-}

@@ -124,17 +124,6 @@ export async function refineDraft(
   return response.data;
 }
 
-/**
- * Validate a draft without regenerating
- */
-export async function validateDraft(draftData: any): Promise<any> {
-  const response = await apiClient.post('/api/v1/ai/validate-draft', {
-    draft_data: draftData,
-  });
-
-  return response.data;
-}
-
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }

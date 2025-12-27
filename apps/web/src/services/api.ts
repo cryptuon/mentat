@@ -5,15 +5,17 @@
 import apiClient from '@/lib/apiClient';
 import { API_ENDPOINTS } from '@/config/api';
 import { adaptMarketListItem, adaptMarketDetail } from './adapters';
-import type { MarketSummary, MarketDetail as FrontendMarketDetail } from '@/types';
+import type {
+  MarketSummary,
+  MarketDetail as FrontendMarketDetail,
+  ProofJob,
+  CreatorMetric,
+} from '@/types';
 import type {
   MarketListItem,
   MarketDetail,
   DraftListItem,
   DraftDetail,
-  DraftCreateRequest,
-  DraftUpdateRequest,
-  CurationAction,
 } from '@/types/api';
 
 // ============================================================================
@@ -60,13 +62,6 @@ export async function fetchMarketDetail(id: string): Promise<FrontendMarketDetai
   }
 }
 
-export async function fetchUserMarkets(walletAddress: string): Promise<MarketListItem[]> {
-  const response = await apiClient.get<MarketListItem[]>(
-    API_ENDPOINTS.MARKETS_USER(walletAddress)
-  );
-  return response.data;
-}
-
 // ============================================================================
 // Drafts API
 // ============================================================================
@@ -84,77 +79,8 @@ export async function fetchDrafts(params?: DraftListParams): Promise<DraftListIt
   return response.data;
 }
 
-export async function fetchDraftDetail(id: string): Promise<DraftDetail> {
-  const response = await apiClient.get<DraftDetail>(API_ENDPOINTS.DRAFTS_DETAIL(id));
-  return response.data;
-}
-
-export async function createDraft(data: DraftCreateRequest): Promise<DraftDetail> {
-  const response = await apiClient.post<DraftDetail>(API_ENDPOINTS.DRAFTS_CREATE, data);
-  return response.data;
-}
-
-export async function updateDraft(id: string, data: DraftUpdateRequest): Promise<DraftDetail> {
-  const response = await apiClient.patch<DraftDetail>(API_ENDPOINTS.DRAFTS_UPDATE(id), data);
-  return response.data;
-}
-
 export async function submitDraft(id: string): Promise<DraftDetail> {
   const response = await apiClient.post<DraftDetail>(API_ENDPOINTS.DRAFTS_SUBMIT(id));
-  return response.data;
-}
-
-// ============================================================================
-// Curator API
-// ============================================================================
-
-export interface CuratorQueueParams {
-  status?: string;
-  assigned_to_me?: boolean;
-  limit?: number;
-  offset?: number;
-}
-
-export async function fetchCuratorQueue(params?: CuratorQueueParams): Promise<DraftListItem[]> {
-  const response = await apiClient.get<DraftListItem[]>(API_ENDPOINTS.CURATOR_QUEUE, {
-    params,
-  });
-  return response.data;
-}
-
-export async function claimDraft(id: string): Promise<DraftDetail> {
-  const response = await apiClient.post<DraftDetail>(API_ENDPOINTS.CURATOR_CLAIM(id));
-  return response.data;
-}
-
-export async function approveDraft(
-  id: string,
-  data: { curator_notes?: string; deploy_immediately?: boolean }
-): Promise<DraftDetail> {
-  const response = await apiClient.post<DraftDetail>(API_ENDPOINTS.CURATOR_APPROVE(id), data);
-  return response.data;
-}
-
-export async function requestChanges(
-  id: string,
-  data: { requested_changes: Record<string, any>; curator_notes: string }
-): Promise<DraftDetail> {
-  const response = await apiClient.post<DraftDetail>(
-    API_ENDPOINTS.CURATOR_REQUEST_CHANGES(id),
-    data
-  );
-  return response.data;
-}
-
-export async function rejectDraft(id: string, reason: string): Promise<DraftDetail> {
-  const response = await apiClient.post<DraftDetail>(API_ENDPOINTS.CURATOR_REJECT(id), {
-    reason,
-  });
-  return response.data;
-}
-
-export async function fetchDraftActions(id: string): Promise<CurationAction[]> {
-  const response = await apiClient.get<CurationAction[]>(API_ENDPOINTS.CURATOR_ACTIONS(id));
   return response.data;
 }
 
@@ -165,31 +91,48 @@ export async function fetchDraftActions(id: string): Promise<CurationAction[]> {
 // These functions provide compatibility with the old mockApi interface
 // They transform the new API types to match the old frontend expectations
 
-export interface ProofJob {
-  marketId: string;
-  question: string;
-  deadline: string;
-  bounty: number;
-  status: 'pending' | 'in_progress' | 'submitted';
-  source: string;
-}
-
-export interface CreatorMetric {
-  title: string;
-  value: string;
-  delta: number;
-  deltaLabel: string;
-}
-
 export async function fetchProofJobs(): Promise<ProofJob[]> {
-  // TODO: Implement proof jobs endpoint when available
-  // For now, return empty array
-  return [];
+  // MOCK: Example data showing proof job interface
+  // TODO: Replace with actual backend endpoint /api/v1/proofs/jobs when implemented
+  return [
+    {
+      marketId: 'btc_100k_2025',
+      question: 'Will Bitcoin reach $100,000 by December 31, 2025?',
+      deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
+      bounty: 50,
+      status: 'pending',
+      source: 'https://coinmarketcap.com/currencies/bitcoin/'
+    },
+    {
+      marketId: 'eth_tps_5000',
+      question: 'Will Ethereum exceed 5,000 transactions per second in 2025?',
+      deadline: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days from now
+      bounty: 75,
+      status: 'in_progress',
+      source: 'https://etherscan.io/chart/tx'
+    },
+    {
+      marketId: 'sol_uptime_30d',
+      question: 'Will Solana network have zero outages for 30 consecutive days?',
+      deadline: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(), // 14 days from now
+      bounty: 100,
+      status: 'pending',
+      source: 'https://status.solana.com'
+    },
+    {
+      marketId: 'ai_agi_2025',
+      question: 'Will any AI system pass the Turing test by end of 2025?',
+      deadline: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 days from now
+      bounty: 150,
+      status: 'pending',
+      source: 'https://openai.com/research'
+    }
+  ];
 }
 
 export async function fetchCreatorMetrics(): Promise<CreatorMetric[]> {
-  // TODO: Implement creator metrics endpoint when available
-  // For now, return mock data
+  // BLOCKED: Backend endpoint /api/v1/creator/metrics not yet implemented
+  // Returns placeholder data until backend adds analytics
   return [
     {
       title: 'Markets launched (30d)',
