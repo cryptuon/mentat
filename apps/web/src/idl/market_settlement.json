@@ -1,0 +1,1562 @@
+{
+  "address": "3sgfKweTHC5EZgGsh6CCcgP9Bqppb5UA6CwgAcHbF9va",
+  "metadata": {
+    "name": "market_settlement",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Market Settlement and Resolution Program"
+  },
+  "instructions": [
+    {
+      "name": "claim_payout",
+      "docs": [
+        "Claim payout for winning positions"
+      ],
+      "discriminator": [
+        127,
+        240,
+        132,
+        62,
+        227,
+        198,
+        146,
+        133
+      ],
+      "accounts": [
+        {
+          "name": "claimer",
+          "docs": [
+            "Payout claimer"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "Market account"
+          ]
+        },
+        {
+          "name": "position",
+          "docs": [
+            "Position account from market-factory program"
+          ],
+          "writable": true
+        },
+        {
+          "name": "liquidity_pool",
+          "docs": [
+            "Liquidity pool from market-factory program"
+          ],
+          "writable": true
+        },
+        {
+          "name": "resolution",
+          "docs": [
+            "Resolution account"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  115,
+                  111,
+                  108,
+                  117,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "payout_claim",
+          "docs": [
+            "Payout claim record"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  97,
+                  121,
+                  111,
+                  117,
+                  116,
+                  95,
+                  99,
+                  108,
+                  97,
+                  105,
+                  109
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "account",
+                "path": "claimer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "open_dispute",
+      "docs": [
+        "Open dispute for market resolution"
+      ],
+      "discriminator": [
+        137,
+        25,
+        99,
+        119,
+        23,
+        223,
+        161,
+        42
+      ],
+      "accounts": [
+        {
+          "name": "disputer",
+          "docs": [
+            "Disputer"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "Market account"
+          ]
+        },
+        {
+          "name": "resolution",
+          "docs": [
+            "Resolution account"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  115,
+                  111,
+                  108,
+                  117,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "dispute",
+          "docs": [
+            "Dispute account"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  105,
+                  115,
+                  112,
+                  117,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "account",
+                "path": "disputer"
+              }
+            ]
+          }
+        },
+        {
+          "name": "dispute_vault",
+          "docs": [
+            "Dispute stake vault"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  105,
+                  115,
+                  112,
+                  117,
+                  116,
+                  101,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "reason",
+          "type": "string"
+        },
+        {
+          "name": "stake_amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "resolve_dispute",
+      "docs": [
+        "Resolve dispute"
+      ],
+      "discriminator": [
+        231,
+        6,
+        202,
+        6,
+        96,
+        103,
+        12,
+        230
+      ],
+      "accounts": [
+        {
+          "name": "resolver",
+          "docs": [
+            "Dispute resolver (market creator, oracle, or DAO)"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "Market account"
+          ]
+        },
+        {
+          "name": "market_resolution",
+          "docs": [
+            "Market resolution account"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  115,
+                  111,
+                  108,
+                  117,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "dispute",
+          "docs": [
+            "Dispute account"
+          ],
+          "writable": true
+        },
+        {
+          "name": "dispute_vault",
+          "docs": [
+            "Dispute vault"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  105,
+                  115,
+                  112,
+                  117,
+                  116,
+                  101,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "disputer",
+          "docs": [
+            "Disputer account (to return/slash stake)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "dispute_id",
+          "type": "u64"
+        },
+        {
+          "name": "resolution",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "resolve_market",
+      "docs": [
+        "Resolve market with verified outcome"
+      ],
+      "discriminator": [
+        155,
+        23,
+        80,
+        173,
+        46,
+        74,
+        23,
+        239
+      ],
+      "accounts": [
+        {
+          "name": "resolver",
+          "docs": [
+            "Market resolver (creator or oracle)"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "Market account from market-factory program"
+          ],
+          "writable": true
+        },
+        {
+          "name": "liquidity_pool",
+          "docs": [
+            "Liquidity pool from market-factory program"
+          ],
+          "writable": true
+        },
+        {
+          "name": "resolution",
+          "docs": [
+            "Resolution account"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  115,
+                  111,
+                  108,
+                  117,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "winning_outcome",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "submit_proof",
+      "docs": [
+        "Submit proof of outcome for market resolution"
+      ],
+      "discriminator": [
+        54,
+        241,
+        46,
+        84,
+        4,
+        212,
+        46,
+        94
+      ],
+      "accounts": [
+        {
+          "name": "submitter",
+          "docs": [
+            "Proof submitter"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "Market account (from market-factory program)"
+          ]
+        },
+        {
+          "name": "resolution",
+          "docs": [
+            "Resolution account for this market"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  115,
+                  111,
+                  108,
+                  117,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "proof",
+          "docs": [
+            "Proof account"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  111,
+                  102
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "account",
+                "path": "resolution.total_proofs",
+                "account": "ResolutionAccount"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "proof_data",
+          "type": "string"
+        },
+        {
+          "name": "outcome_index",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "verify_proof",
+      "docs": [
+        "Verify submitted proof"
+      ],
+      "discriminator": [
+        217,
+        211,
+        191,
+        110,
+        144,
+        13,
+        186,
+        98
+      ],
+      "accounts": [
+        {
+          "name": "verifier",
+          "docs": [
+            "Verifier (market creator or designated oracle)"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "Market account"
+          ]
+        },
+        {
+          "name": "resolution",
+          "docs": [
+            "Resolution account"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  115,
+                  111,
+                  108,
+                  117,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "proof",
+          "docs": [
+            "Proof account to verify"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  111,
+                  102
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "arg",
+                "path": "proof_id"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "proof_id",
+          "type": "u64"
+        },
+        {
+          "name": "is_valid",
+          "type": "bool"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "DisputeAccount",
+      "discriminator": [
+        237,
+        70,
+        91,
+        63,
+        81,
+        74,
+        45,
+        43
+      ]
+    },
+    {
+      "name": "PayoutClaimAccount",
+      "discriminator": [
+        38,
+        167,
+        114,
+        86,
+        78,
+        97,
+        131,
+        2
+      ]
+    },
+    {
+      "name": "ProofAccount",
+      "discriminator": [
+        54,
+        244,
+        192,
+        233,
+        218,
+        58,
+        44,
+        242
+      ]
+    },
+    {
+      "name": "ResolutionAccount",
+      "discriminator": [
+        114,
+        112,
+        17,
+        53,
+        35,
+        50,
+        130,
+        3
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "DisputeOpened",
+      "discriminator": [
+        239,
+        222,
+        102,
+        235,
+        193,
+        85,
+        1,
+        214
+      ]
+    },
+    {
+      "name": "DisputeResolved",
+      "discriminator": [
+        121,
+        64,
+        249,
+        153,
+        139,
+        128,
+        236,
+        187
+      ]
+    },
+    {
+      "name": "MarketResolved",
+      "discriminator": [
+        89,
+        67,
+        230,
+        95,
+        143,
+        106,
+        199,
+        202
+      ]
+    },
+    {
+      "name": "PayoutClaimed",
+      "discriminator": [
+        200,
+        39,
+        105,
+        112,
+        116,
+        63,
+        58,
+        149
+      ]
+    },
+    {
+      "name": "ProofSubmitted",
+      "discriminator": [
+        160,
+        51,
+        85,
+        70,
+        249,
+        89,
+        5,
+        139
+      ]
+    },
+    {
+      "name": "ProofVerified",
+      "discriminator": [
+        181,
+        54,
+        148,
+        211,
+        237,
+        73,
+        131,
+        232
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "MarketNotResolved",
+      "msg": "Market is not in resolved state"
+    },
+    {
+      "code": 6001,
+      "name": "ResolutionDeadlineNotReached",
+      "msg": "Market resolution deadline not reached"
+    },
+    {
+      "code": 6002,
+      "name": "MarketAlreadyResolved",
+      "msg": "Market is already resolved"
+    },
+    {
+      "code": 6003,
+      "name": "InvalidOutcome",
+      "msg": "Invalid outcome index"
+    },
+    {
+      "code": 6004,
+      "name": "ProofDataTooLong",
+      "msg": "Proof data exceeds maximum length"
+    },
+    {
+      "code": 6005,
+      "name": "DisputeReasonTooLong",
+      "msg": "Dispute reason exceeds maximum length"
+    },
+    {
+      "code": 6006,
+      "name": "InsufficientDisputeStake",
+      "msg": "Insufficient dispute stake"
+    },
+    {
+      "code": 6007,
+      "name": "DisputePeriodExpired",
+      "msg": "Dispute period has expired"
+    },
+    {
+      "code": 6008,
+      "name": "MarketUnderDispute",
+      "msg": "Market is under dispute"
+    },
+    {
+      "code": 6009,
+      "name": "DisputeNotFound",
+      "msg": "Dispute not found"
+    },
+    {
+      "code": 6010,
+      "name": "DisputeAlreadyResolved",
+      "msg": "Dispute already resolved"
+    },
+    {
+      "code": 6011,
+      "name": "ProofNotVerified",
+      "msg": "Proof not verified"
+    },
+    {
+      "code": 6012,
+      "name": "ProofAlreadyVerified",
+      "msg": "Proof already verified"
+    },
+    {
+      "code": 6013,
+      "name": "ProofAlreadyRejected",
+      "msg": "Proof already rejected"
+    },
+    {
+      "code": 6014,
+      "name": "NoWinningShares",
+      "msg": "No winning shares to claim"
+    },
+    {
+      "code": 6015,
+      "name": "PayoutAlreadyClaimed",
+      "msg": "Payout already claimed"
+    },
+    {
+      "code": 6016,
+      "name": "SettlementDeadlineNotPassed",
+      "msg": "Settlement deadline not passed"
+    },
+    {
+      "code": 6017,
+      "name": "UnauthorizedCreator",
+      "msg": "Unauthorized: Only market creator can perform this action"
+    },
+    {
+      "code": 6018,
+      "name": "UnauthorizedVerifier",
+      "msg": "Unauthorized: Only verifier can perform this action"
+    },
+    {
+      "code": 6019,
+      "name": "UnauthorizedDisputer",
+      "msg": "Unauthorized: Only disputer can perform this action"
+    },
+    {
+      "code": 6020,
+      "name": "MathOverflow",
+      "msg": "Math overflow"
+    },
+    {
+      "code": 6021,
+      "name": "DivisionByZero",
+      "msg": "Division by zero"
+    },
+    {
+      "code": 6022,
+      "name": "InvalidProofStatusTransition",
+      "msg": "Invalid proof status transition"
+    },
+    {
+      "code": 6023,
+      "name": "InvalidDisputeStatusTransition",
+      "msg": "Invalid dispute status transition"
+    },
+    {
+      "code": 6024,
+      "name": "TooManyProofs",
+      "msg": "Too many concurrent proofs"
+    },
+    {
+      "code": 6025,
+      "name": "MinVerificationsNotMet",
+      "msg": "Minimum verifications not met"
+    },
+    {
+      "code": 6026,
+      "name": "NoSharesForWinningOutcome",
+      "msg": "Position has no shares for winning outcome"
+    },
+    {
+      "code": 6027,
+      "name": "InvalidPayoutCalculation",
+      "msg": "Invalid payout calculation"
+    }
+  ],
+  "types": [
+    {
+      "name": "DisputeAccount",
+      "docs": [
+        "Dispute account"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "docs": [
+              "Associated market"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "disputer",
+            "docs": [
+              "Dispute initiator"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "dispute_id",
+            "docs": [
+              "Unique dispute ID"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "reason",
+            "docs": [
+              "Dispute reason"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "original_outcome",
+            "docs": [
+              "Original outcome being disputed"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "proposed_outcome",
+            "docs": [
+              "Proposed alternative outcome"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "stake_amount",
+            "docs": [
+              "Stake amount locked"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "status",
+            "docs": [
+              "Current dispute status"
+            ],
+            "type": {
+              "defined": {
+                "name": "DisputeStatus"
+              }
+            }
+          },
+          {
+            "name": "resolver",
+            "docs": [
+              "Dispute resolver"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "opened_at",
+            "docs": [
+              "Dispute opened timestamp"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "resolved_at",
+            "docs": [
+              "Dispute resolved timestamp"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "DisputeOpened",
+      "docs": [
+        "Event emitted when dispute is opened"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "dispute_id",
+            "type": "u64"
+          },
+          {
+            "name": "disputer",
+            "type": "pubkey"
+          },
+          {
+            "name": "original_outcome",
+            "type": "u8"
+          },
+          {
+            "name": "proposed_outcome",
+            "type": "u8"
+          },
+          {
+            "name": "stake_amount",
+            "type": "u64"
+          },
+          {
+            "name": "reason",
+            "type": "string"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "DisputeResolved",
+      "docs": [
+        "Event emitted when dispute is resolved"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "dispute_id",
+            "type": "u64"
+          },
+          {
+            "name": "resolver",
+            "type": "pubkey"
+          },
+          {
+            "name": "resolution",
+            "type": "string"
+          },
+          {
+            "name": "final_outcome",
+            "type": "u8"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "DisputeStatus",
+      "docs": [
+        "Dispute resolution status"
+      ],
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Open"
+          },
+          {
+            "name": "ResolvedOriginal"
+          },
+          {
+            "name": "ResolvedChanged"
+          },
+          {
+            "name": "Rejected"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarketResolved",
+      "docs": [
+        "Event emitted when market is resolved"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "resolver",
+            "type": "pubkey"
+          },
+          {
+            "name": "winning_outcome",
+            "type": "u8"
+          },
+          {
+            "name": "total_payout",
+            "type": "u64"
+          },
+          {
+            "name": "settlement_deadline",
+            "type": "i64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PayoutClaimAccount",
+      "docs": [
+        "Payout claim account"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "docs": [
+              "Associated market"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "claimer",
+            "docs": [
+              "Claimer address"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "position",
+            "docs": [
+              "Position used for claim"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "amount_claimed",
+            "docs": [
+              "Amount claimed"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "shares_used",
+            "docs": [
+              "Shares used for claim"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "claimed_at",
+            "docs": [
+              "Claim timestamp"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PayoutClaimed",
+      "docs": [
+        "Event emitted when payout is claimed"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "claimer",
+            "type": "pubkey"
+          },
+          {
+            "name": "position",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount_claimed",
+            "type": "u64"
+          },
+          {
+            "name": "shares_used",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProofAccount",
+      "docs": [
+        "Proof submission account"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "docs": [
+              "Associated market"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "submitter",
+            "docs": [
+              "Proof submitter"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "proof_id",
+            "docs": [
+              "Unique proof ID"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "outcome_index",
+            "docs": [
+              "Proposed outcome index"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "proof_data",
+            "docs": [
+              "Proof data (URI or hash)"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "docs": [
+              "Current proof status"
+            ],
+            "type": {
+              "defined": {
+                "name": "ProofStatus"
+              }
+            }
+          },
+          {
+            "name": "verifier",
+            "docs": [
+              "Verifier (if verified/rejected)"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "verification_count",
+            "docs": [
+              "Number of verifications received"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "submitted_at",
+            "docs": [
+              "Submission timestamp"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "verified_at",
+            "docs": [
+              "Verification timestamp"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProofStatus",
+      "docs": [
+        "Proof submission status"
+      ],
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Pending"
+          },
+          {
+            "name": "Verified"
+          },
+          {
+            "name": "Rejected"
+          },
+          {
+            "name": "Disputed"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProofSubmitted",
+      "docs": [
+        "Event emitted when proof is submitted"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "proof_id",
+            "type": "u64"
+          },
+          {
+            "name": "submitter",
+            "type": "pubkey"
+          },
+          {
+            "name": "outcome_index",
+            "type": "u8"
+          },
+          {
+            "name": "proof_data",
+            "type": "string"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProofVerified",
+      "docs": [
+        "Event emitted when proof is verified"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "proof_id",
+            "type": "u64"
+          },
+          {
+            "name": "verifier",
+            "type": "pubkey"
+          },
+          {
+            "name": "is_valid",
+            "type": "bool"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ResolutionAccount",
+      "docs": [
+        "Market resolution account"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "docs": [
+              "Associated market"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "resolver",
+            "docs": [
+              "Resolver (market creator or oracle)"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "winning_outcome",
+            "docs": [
+              "Winning outcome index"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "total_proofs",
+            "docs": [
+              "Number of proofs submitted"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "verified_proofs",
+            "docs": [
+              "Number of verified proofs"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "total_payout",
+            "docs": [
+              "Total payout amount"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "claimed_amount",
+            "docs": [
+              "Amount claimed so far"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "claim_count",
+            "docs": [
+              "Number of claims processed"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "resolved_at",
+            "docs": [
+              "Resolution timestamp"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "settlement_deadline",
+            "docs": [
+              "Settlement deadline"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "is_disputed",
+            "docs": [
+              "Whether resolution is under dispute"
+            ],
+            "type": "bool"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    }
+  ]
+}

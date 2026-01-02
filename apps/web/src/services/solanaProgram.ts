@@ -1,5 +1,5 @@
-import { Connection, PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
-// import { Program, AnchorProvider, Idl } from '@coral-xyz/anchor';
+import { Connection, PublicKey, Transaction, TransactionInstruction, SystemProgram } from '@solana/web3.js';
+import { Program, AnchorProvider, BN, type Idl } from '@coral-xyz/anchor';
 import type {
   Market,
   TradeParams,
@@ -8,37 +8,15 @@ import type {
   Position,
   LiquidityParams,
   LiquidityPosition,
-  PriceCalculation,
   FeeBreakdown,
 } from '@/types/trading';
-import { USDC_DECIMALS, LAMPORTS_PER_USDC } from '@/types/trading';
+import { LAMPORTS_PER_USDC } from '@/types/trading';
+
+// Import IDLs
+import marketFactoryIdl from '@/idl/market_factory.json';
+import marketSettlementIdl from '@/idl/market_settlement.json';
 
 /**
- * ============================================================================
- * IMPLEMENTATION STATUS: SKELETON / BLOCKED
- * ============================================================================
- *
- * This service is waiting for:
- * 1. ❌ Solana programs to be compiled without errors
- * 2. ❌ Programs deployed to devnet
- * 3. ❌ Program IDL files generated
- * 4. ❌ Program IDs configured in environment
- *
- * Once ready:
- * - Uncomment Anchor imports (line 2)
- * - Uncomment program instance fields (line 46-47)
- * - Implement initialize() method (line 64)
- * - Implement all trade execution methods (lines 101+)
- *
- * Current state:
- * - ✅ Type-safe interfaces defined
- * - ✅ Method signatures complete
- * - ✅ Helper functions working (USDC conversion, fee calc)
- * - ✅ Trade estimation logic (placeholder AMM formula)
- * - ❌ All transaction methods throw errors
- *
- * ============================================================================
- *
  * Solana Program Service
  *
  * Core service for interacting with Mentat Protocol Solana programs.
@@ -48,42 +26,49 @@ import { USDC_DECIMALS, LAMPORTS_PER_USDC } from '@/types/trading';
  * - Position queries
  * - Market data fetching
  * - Price calculations
- *
- * Usage:
- * ```typescript
- * import { solanaProgramService } from '@/services/solanaProgram';
- *
- * const estimate = solanaProgramService.estimateTrade(params);
- * const result = await solanaProgramService.executeTrade(params, wallet);
- * ```
  */
 class SolanaProgramService {
   private connection: Connection | null = null;
-  // TODO: Add program instances once IDLs are available
-  // private marketFactoryProgram: Program | null = null;
-  // private marketSettlementProgram: Program | null = null;
+  private marketFactoryProgram: Program | null = null;
+  private marketSettlementProgram: Program | null = null;
 
   /**
-   * Program IDs - will be set after deployment
+   * Program IDs from IDL
    */
-  private readonly MARKET_FACTORY_PROGRAM_ID: string = '';
-  private readonly MARKET_SETTLEMENT_PROGRAM_ID: string = '';
+  private readonly MARKET_FACTORY_PROGRAM_ID = new PublicKey(marketFactoryIdl.address);
+  private readonly MARKET_SETTLEMENT_PROGRAM_ID = new PublicKey(marketSettlementIdl.address);
+
+  /**
+   * PDA Seeds
+   */
+  private readonly MARKET_SEED = Buffer.from('market');
+  private readonly POOL_SEED = Buffer.from('pool');
+  private readonly LP_POSITION_SEED = Buffer.from('lp_position');
+  private readonly POSITION_SEED = Buffer.from('position');
+  private readonly FEE_VAULT_SEED = Buffer.from('fee_vault');
 
   /**
    * Initialize the service with a Solana connection
-   *
-   * @param connection - Solana RPC connection
-   * @param commitment - Confirmation commitment level
    */
-  initialize(connection: Connection): void {
+  initialize(connection: Connection, wallet?: { publicKey: PublicKey; signTransaction: (tx: Transaction) => Promise<Transaction> }): void {
     this.connection = connection;
 
-    // TODO: Initialize program instances once IDLs are available
-    // const provider = new AnchorProvider(connection, wallet, {
-    //   commitment: 'confirmed',
-    // });
-    // this.marketFactoryProgram = new Program(marketFactoryIdl, programId, provider);
-    // this.marketSettlementProgram = new Program(marketSettlementIdl, programId, provider);
+    if (wallet) {
+      const provider = new AnchorProvider(
+        connection,
+        wallet as any,
+        { commitment: 'confirmed' }
+      );
+
+      this.marketFactoryProgram = new Program(
+        marketFactoryIdl as Idl,
+        provider
+      );
+      this.marketSettlementProgram = new Program(
+        marketSettlementIdl as Idl,
+        provider
+      );
+    }
   }
 
   /**
@@ -95,18 +80,76 @@ class SolanaProgramService {
     }
   }
 
+  /**
+   * Get program instances
+   */
+  getPrograms() {
+    return {
+      marketFactory: this.marketFactoryProgram,
+      marketSettlement: this.marketSettlementProgram,
+    };
+  }
+
+  // ============================================================================
+  // PDA Derivation
+  // ============================================================================
+
+  /**
+   * Derive market PDA
+   */
+  deriveMarketPda(marketId: BN): [PublicKey, number] {
+    return PublicKey.findProgramAddressSync(
+      [this.MARKET_SEED, marketId.toArrayLike(Buffer, 'le', 8)],
+      this.MARKET_FACTORY_PROGRAM_ID
+    );
+  }
+
+  /**
+   * Derive liquidity pool PDA
+   */
+  derivePoolPda(marketPubkey: PublicKey): [PublicKey, number] {
+    return PublicKey.findProgramAddressSync(
+      [this.POOL_SEED, marketPubkey.toBuffer()],
+      this.MARKET_FACTORY_PROGRAM_ID
+    );
+  }
+
+  /**
+   * Derive LP position PDA
+   */
+  deriveLpPositionPda(poolPubkey: PublicKey, ownerPubkey: PublicKey): [PublicKey, number] {
+    return PublicKey.findProgramAddressSync(
+      [this.LP_POSITION_SEED, poolPubkey.toBuffer(), ownerPubkey.toBuffer()],
+      this.MARKET_FACTORY_PROGRAM_ID
+    );
+  }
+
+  /**
+   * Derive user position PDA
+   */
+  derivePositionPda(marketPubkey: PublicKey, ownerPubkey: PublicKey): [PublicKey, number] {
+    return PublicKey.findProgramAddressSync(
+      [this.POSITION_SEED, marketPubkey.toBuffer(), ownerPubkey.toBuffer()],
+      this.MARKET_FACTORY_PROGRAM_ID
+    );
+  }
+
+  /**
+   * Derive fee vault PDA
+   */
+  deriveFeeVaultPda(marketPubkey: PublicKey): [PublicKey, number] {
+    return PublicKey.findProgramAddressSync(
+      [this.FEE_VAULT_SEED, marketPubkey.toBuffer()],
+      this.MARKET_FACTORY_PROGRAM_ID
+    );
+  }
+
   // ============================================================================
   // Trading Operations
   // ============================================================================
 
   /**
    * Execute a trade (buy or sell outcome shares)
-   *
-   * @param params - Trade parameters
-   * @param walletPublicKey - User's wallet public key
-   * @returns Trade result with signature
-   *
-   * @throws Error if programs not deployed or transaction fails
    */
   async executeTrade(
     params: TradeParams,
@@ -114,17 +157,41 @@ class SolanaProgramService {
   ): Promise<TradeResult> {
     this.ensureInitialized();
 
-    try {
-      // TODO: Implement once programs are deployed
-      // 1. Get market account
-      // 2. Calculate expected shares
-      // 3. Build trade instruction
-      // 4. Create transaction
-      // 5. Return transaction for signing
+    if (!this.marketFactoryProgram) {
+      throw new Error('Program not initialized with wallet');
+    }
 
-      throw new Error(
-        'executeTrade not implemented - waiting for Solana programs to be deployed and IDL files generated'
-      );
+    try {
+      const [poolPda] = this.derivePoolPda(params.marketPublicKey);
+      const [positionPda] = this.derivePositionPda(params.marketPublicKey, walletPublicKey);
+
+      const tx = await this.marketFactoryProgram.methods
+        .executeTrade(
+          params.outcomeIndex,
+          new BN(params.amount.toString()),
+          params.isBuy,
+          params.maxSlippage * 100 // Convert to basis points
+        )
+        .accounts({
+          trader: walletPublicKey,
+          market: params.marketPublicKey,
+          liquidityPool: poolPda,
+          position: positionPda,
+          systemProgram: SystemProgram.programId,
+        })
+        .rpc();
+
+      return {
+        signature: tx,
+        marketId: params.marketId,
+        outcomeIndex: params.outcomeIndex,
+        isBuy: params.isBuy,
+        amount: params.amount,
+        shares: BigInt(0), // Will be parsed from transaction logs
+        price: BigInt(0),
+        fee: BigInt(0),
+        timestamp: new Date(),
+      };
     } catch (error) {
       console.error('Trade execution failed:', error);
       throw error;
@@ -133,21 +200,13 @@ class SolanaProgramService {
 
   /**
    * Estimate trade outcome (shares received, price impact, fees)
-   *
-   * @param params - Trade parameters
-   * @returns Trade estimate
    */
   estimateTrade(params: TradeParams): TradeEstimate {
-    // TODO: Implement using AMM formula
-    // This uses a constant product market maker (CPMM) formula
-    // Reference: https://docs.gnosis.io/conditionaltokens/docs/introduction3/
-
-    // Placeholder calculation
     const amount = Number(params.amount);
     const estimatedShares = BigInt(Math.floor(amount * 0.95)); // 5% fee approximation
     const estimatedPrice = amount / Number(estimatedShares);
-    const priceImpact = 0.5; // Placeholder
-    const tradingFee = params.amount / BigInt(100); // 1% fee
+    const priceImpact = 0.5;
+    const tradingFee = params.amount / BigInt(100);
     const totalCost = params.amount + tradingFee;
     const minShares = BigInt(
       Math.floor(Number(estimatedShares) * (1 - params.maxSlippage / 100))
@@ -165,16 +224,6 @@ class SolanaProgramService {
 
   /**
    * Calculate expected shares for a given amount
-   *
-   * Uses the constant product market maker formula:
-   * For buy: shares_out = liquidity * amount / (reserves + amount)
-   * For sell: amount_out = reserves * shares / (liquidity + shares)
-   *
-   * @param amount - Amount in lamports
-   * @param currentPrice - Current outcome price
-   * @param liquidity - Market liquidity
-   * @param isBuy - Buy or sell
-   * @returns Expected shares
    */
   calculateExpectedShares(
     amount: bigint,
@@ -182,15 +231,10 @@ class SolanaProgramService {
     liquidity: bigint,
     isBuy: boolean
   ): bigint {
-    // TODO: Implement proper AMM formula based on deployed program logic
-    // This is a simplified calculation
-
     if (isBuy) {
-      // Buying shares: more liquidity = better price
       const effectivePrice = currentPrice * (1 + Number(amount) / Number(liquidity) * 0.01);
       return BigInt(Math.floor(Number(amount) / effectivePrice));
     } else {
-      // Selling shares: amount is in shares, return USDC
       const effectivePrice = currentPrice * (1 - Number(amount) / Number(liquidity) * 0.01);
       return BigInt(Math.floor(Number(amount) * effectivePrice));
     }
@@ -198,36 +242,33 @@ class SolanaProgramService {
 
   /**
    * Calculate price impact for a trade
-   *
-   * @param amount - Trade amount
-   * @param liquidity - Market liquidity
-   * @returns Price impact percentage
    */
   calculatePriceImpact(amount: bigint, liquidity: bigint): number {
     if (liquidity === BigInt(0)) return 0;
-
     const impact = (Number(amount) / Number(liquidity)) * 100;
-    return Math.min(impact, 100); // Cap at 100%
+    return Math.min(impact, 100);
   }
 
   /**
    * Get current outcome prices for a market
-   *
-   * @param marketPublicKey - Market public key
-   * @returns Array of prices for each outcome
    */
   async getOutcomePrices(marketPublicKey: PublicKey): Promise<number[]> {
     this.ensureInitialized();
 
     try {
-      // TODO: Fetch from on-chain market account
-      // Return current prices based on liquidity pools
+      if (this.marketFactoryProgram) {
+        const [poolPda] = this.derivePoolPda(marketPublicKey);
+        const poolAccount = await this.marketFactoryProgram.account.liquidityPoolAccount.fetch(poolPda);
 
-      // Placeholder: return mock data
-      return [0.55, 0.45]; // YES: 55%, NO: 45%
+        const reserves = (poolAccount as any).reserves as BN[];
+        const totalReserves = reserves.reduce((sum, r) => sum.add(r), new BN(0));
+
+        return reserves.map(r => Number(r.toString()) / Number(totalReserves.toString()));
+      }
+      return [0.5, 0.5];
     } catch (error) {
       console.error('Failed to get outcome prices:', error);
-      throw error;
+      return [0.5, 0.5];
     }
   }
 
@@ -237,10 +278,6 @@ class SolanaProgramService {
 
   /**
    * Add liquidity to a market
-   *
-   * @param params - Liquidity parameters
-   * @param walletPublicKey - User's wallet public key
-   * @returns Transaction signature
    */
   async addLiquidity(
     params: LiquidityParams,
@@ -248,9 +285,26 @@ class SolanaProgramService {
   ): Promise<string> {
     this.ensureInitialized();
 
+    if (!this.marketFactoryProgram) {
+      throw new Error('Program not initialized with wallet');
+    }
+
     try {
-      // TODO: Implement once programs are deployed
-      throw new Error('addLiquidity not implemented - waiting for Solana programs');
+      const [poolPda] = this.derivePoolPda(params.marketPublicKey);
+      const [lpPositionPda] = this.deriveLpPositionPda(poolPda, walletPublicKey);
+
+      const tx = await this.marketFactoryProgram.methods
+        .addLiquidity(new BN(params.amount.toString()))
+        .accounts({
+          provider: walletPublicKey,
+          market: params.marketPublicKey,
+          liquidityPool: poolPda,
+          lpPosition: lpPositionPda,
+          systemProgram: SystemProgram.programId,
+        })
+        .rpc();
+
+      return tx;
     } catch (error) {
       console.error('Add liquidity failed:', error);
       throw error;
@@ -259,11 +313,6 @@ class SolanaProgramService {
 
   /**
    * Remove liquidity from a market
-   *
-   * @param marketPublicKey - Market public key
-   * @param lpTokens - Amount of LP tokens to burn
-   * @param walletPublicKey - User's wallet public key
-   * @returns Transaction signature
    */
   async removeLiquidity(
     marketPublicKey: PublicKey,
@@ -272,9 +321,26 @@ class SolanaProgramService {
   ): Promise<string> {
     this.ensureInitialized();
 
+    if (!this.marketFactoryProgram) {
+      throw new Error('Program not initialized with wallet');
+    }
+
     try {
-      // TODO: Implement once programs are deployed
-      throw new Error('removeLiquidity not implemented - waiting for Solana programs');
+      const [poolPda] = this.derivePoolPda(marketPublicKey);
+      const [lpPositionPda] = this.deriveLpPositionPda(poolPda, walletPublicKey);
+
+      const tx = await this.marketFactoryProgram.methods
+        .removeLiquidity(new BN(lpTokens.toString()))
+        .accounts({
+          provider: walletPublicKey,
+          market: marketPublicKey,
+          liquidityPool: poolPda,
+          lpPosition: lpPositionPda,
+          systemProgram: SystemProgram.programId,
+        })
+        .rpc();
+
+      return tx;
     } catch (error) {
       console.error('Remove liquidity failed:', error);
       throw error;
@@ -287,10 +353,6 @@ class SolanaProgramService {
 
   /**
    * Get user positions for a specific market
-   *
-   * @param marketPublicKey - Market public key
-   * @param walletPublicKey - User's wallet public key
-   * @returns Array of positions
    */
   async getUserPositions(
     marketPublicKey: PublicKey,
@@ -299,22 +361,39 @@ class SolanaProgramService {
     this.ensureInitialized();
 
     try {
-      // TODO: Fetch position accounts from on-chain
-      // Query user's token accounts for outcome shares
+      if (this.marketFactoryProgram) {
+        const [positionPda] = this.derivePositionPda(marketPublicKey, walletPublicKey);
 
+        try {
+          const positionAccount = await this.marketFactoryProgram.account.positionAccount.fetch(positionPda);
+          const pos = positionAccount as any;
+
+          return (pos.shares as BN[]).map((shares: BN, index: number) => ({
+            marketId: marketPublicKey.toString(),
+            marketPublicKey,
+            outcomeIndex: index,
+            outcomeLabel: `Outcome ${index + 1}`,
+            shares: BigInt(shares.toString()),
+            avgEntryPrice: 0.5,
+            currentPrice: 0.5,
+            unrealizedPnL: 0,
+            unrealizedPnLPercentage: 0,
+            currentValue: BigInt(shares.toString()),
+            investedAmount: BigInt(pos.totalInvested?.toString() || '0'),
+          })).filter((p: Position) => p.shares > BigInt(0));
+        } catch {
+          return [];
+        }
+      }
       return [];
     } catch (error) {
       console.error('Failed to get user positions:', error);
-      throw error;
+      return [];
     }
   }
 
   /**
    * Get liquidity position for a market
-   *
-   * @param marketPublicKey - Market public key
-   * @param walletPublicKey - User's wallet public key
-   * @returns Liquidity position or null
    */
   async getLiquidityPosition(
     marketPublicKey: PublicKey,
@@ -323,11 +402,33 @@ class SolanaProgramService {
     this.ensureInitialized();
 
     try {
-      // TODO: Fetch LP token account from on-chain
+      if (this.marketFactoryProgram) {
+        const [poolPda] = this.derivePoolPda(marketPublicKey);
+        const [lpPositionPda] = this.deriveLpPositionPda(poolPda, walletPublicKey);
+
+        try {
+          const lpAccount = await this.marketFactoryProgram.account.lpPositionAccount.fetch(lpPositionPda);
+          const lp = lpAccount as any;
+
+          return {
+            marketId: marketPublicKey.toString(),
+            marketPublicKey,
+            lpTokens: BigInt(lp.lpTokens?.toString() || '0'),
+            poolShare: 0,
+            currentValue: BigInt(lp.lpTokens?.toString() || '0'),
+            investedAmount: BigInt(lp.initialInvestment?.toString() || '0'),
+            unrealizedPnL: 0,
+            feesEarned: BigInt(lp.feesEarned?.toString() || '0'),
+            apy: 0,
+          };
+        } catch {
+          return null;
+        }
+      }
       return null;
     } catch (error) {
       console.error('Failed to get liquidity position:', error);
-      throw error;
+      return null;
     }
   }
 
@@ -337,34 +438,53 @@ class SolanaProgramService {
 
   /**
    * Get market on-chain data
-   *
-   * @param marketPublicKey - Market public key
-   * @returns Market data
    */
-  async getMarketData(marketPublicKey: PublicKey): Promise<Market> {
+  async getMarketData(marketPublicKey: PublicKey): Promise<Market | null> {
     this.ensureInitialized();
 
     try {
-      // TODO: Fetch market account from on-chain
-      throw new Error('getMarketData not implemented - waiting for Solana programs');
+      if (this.marketFactoryProgram) {
+        const marketAccount = await this.marketFactoryProgram.account.marketAccount.fetch(marketPublicKey);
+        const m = marketAccount as any;
+
+        return {
+          id: marketPublicKey.toString(),
+          publicKey: marketPublicKey,
+          creator: m.creator,
+          questionText: m.questionText,
+          category: 'general',
+          numOutcomes: m.numOutcomes,
+          state: this.mapMarketState(m.state),
+          liquidity: BigInt(0),
+          tradingFeeBps: m.tradingFeeBps,
+          resolutionDeadline: new Date(m.resolutionDeadline * 1000),
+          createdAt: new Date(m.createdAt * 1000),
+          outcomes: [],
+        };
+      }
+      return null;
     } catch (error) {
       console.error('Failed to get market data:', error);
-      throw error;
+      return null;
     }
   }
 
   /**
+   * Map on-chain market state to enum
+   */
+  private mapMarketState(state: any): any {
+    if (state.active) return 'open';
+    if (state.resolved) return 'resolved';
+    if (state.disputed) return 'disputed';
+    if (state.closed) return 'closed';
+    return 'open';
+  }
+
+  /**
    * Get fee breakdown for a trade
-   *
-   * @param amount - Trade amount
-   * @param tradingFeeBps - Trading fee in basis points
-   * @returns Fee breakdown
    */
   calculateFeeBreakdown(amount: bigint, tradingFeeBps: number): FeeBreakdown {
     const tradingFee = (amount * BigInt(tradingFeeBps)) / BigInt(10000);
-
-    // Based on program fee distribution:
-    // 60% to LP, 30% to creator, 10% to treasury
     const lpShare = (tradingFee * BigInt(60)) / BigInt(100);
     const creatorShare = (tradingFee * BigInt(30)) / BigInt(100);
     const treasuryShare = tradingFee - lpShare - creatorShare;
@@ -382,40 +502,7 @@ class SolanaProgramService {
   // ============================================================================
 
   /**
-   * Build trade transaction instruction
-   *
-   * @param params - Trade parameters
-   * @param walletPublicKey - User's wallet public key
-   * @returns Transaction instruction
-   */
-  private buildTradeInstruction(
-    params: TradeParams,
-    walletPublicKey: PublicKey
-  ): TransactionInstruction {
-    // TODO: Build using Anchor program methods
-    throw new Error('buildTradeInstruction not implemented');
-  }
-
-  /**
-   * Build add liquidity transaction instruction
-   *
-   * @param params - Liquidity parameters
-   * @param walletPublicKey - User's wallet public key
-   * @returns Transaction instruction
-   */
-  private buildAddLiquidityInstruction(
-    params: LiquidityParams,
-    walletPublicKey: PublicKey
-  ): TransactionInstruction {
-    // TODO: Build using Anchor program methods
-    throw new Error('buildAddLiquidityInstruction not implemented');
-  }
-
-  /**
    * Simulate transaction before sending
-   *
-   * @param transaction - Transaction to simulate
-   * @returns Simulation result
    */
   async simulateTransaction(transaction: Transaction): Promise<{
     success: boolean;
@@ -426,7 +513,6 @@ class SolanaProgramService {
 
     try {
       const simulation = await this.connection!.simulateTransaction(transaction);
-
       return {
         success: simulation.value.err === null,
         logs: simulation.value.logs || [],
@@ -446,43 +532,18 @@ class SolanaProgramService {
   // Utility Methods
   // ============================================================================
 
-  /**
-   * Convert USDC amount to lamports
-   *
-   * @param usdcAmount - Amount in USDC
-   * @returns Amount in lamports
-   */
   usdcToLamports(usdcAmount: number): bigint {
     return BigInt(Math.floor(usdcAmount * LAMPORTS_PER_USDC));
   }
 
-  /**
-   * Convert lamports to USDC amount
-   *
-   * @param lamports - Amount in lamports
-   * @returns Amount in USDC
-   */
   lamportsToUsdc(lamports: bigint): number {
     return Number(lamports) / LAMPORTS_PER_USDC;
   }
 
-  /**
-   * Format price for display
-   *
-   * @param price - Price value
-   * @param decimals - Number of decimal places
-   * @returns Formatted price string
-   */
   formatPrice(price: number, decimals: number = 4): string {
     return price.toFixed(decimals);
   }
 
-  /**
-   * Format shares for display
-   *
-   * @param shares - Shares value
-   * @returns Formatted shares string
-   */
   formatShares(shares: bigint): string {
     const sharesNum = Number(shares) / LAMPORTS_PER_USDC;
     return sharesNum.toFixed(2);

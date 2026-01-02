@@ -1,0 +1,1555 @@
+{
+  "address": "3sgfKweTHC5EZgGsh6CCcgP9Bqppb5UA6CwgAcHbF9va",
+  "metadata": {
+    "name": "market_factory",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "add_liquidity",
+      "docs": [
+        "Add liquidity to a market pool"
+      ],
+      "discriminator": [
+        181,
+        157,
+        89,
+        67,
+        143,
+        182,
+        52,
+        72
+      ],
+      "accounts": [
+        {
+          "name": "provider",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market"
+        },
+        {
+          "name": "liquidity_pool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "lp_position",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  112,
+                  95,
+                  112,
+                  111,
+                  115,
+                  105,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "liquidity_pool"
+              },
+              {
+                "kind": "account",
+                "path": "provider"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "close_market",
+      "docs": [
+        "Close market and withdraw fees (After resolution)"
+      ],
+      "discriminator": [
+        88,
+        154,
+        248,
+        186,
+        48,
+        14,
+        123,
+        244
+      ],
+      "accounts": [
+        {
+          "name": "creator",
+          "docs": [
+            "Market creator"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "Market account"
+          ],
+          "writable": true
+        },
+        {
+          "name": "liquidity_pool",
+          "docs": [
+            "Liquidity pool"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "fee_vault",
+          "docs": [
+            "Fee vault"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  101,
+                  101,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "execute_trade",
+      "docs": [
+        "Execute a trade (buy or sell outcome shares)"
+      ],
+      "discriminator": [
+        77,
+        16,
+        192,
+        135,
+        13,
+        0,
+        106,
+        97
+      ],
+      "accounts": [
+        {
+          "name": "trader",
+          "docs": [
+            "Trader"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "Market account"
+          ],
+          "writable": true
+        },
+        {
+          "name": "liquidity_pool",
+          "docs": [
+            "Liquidity pool"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "fee_vault",
+          "docs": [
+            "Fee vault"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  101,
+                  101,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "position",
+          "docs": [
+            "Trader's position account"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  111,
+                  115,
+                  105,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "account",
+                "path": "trader"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "outcome_index",
+          "type": "u8"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "is_buy",
+          "type": "bool"
+        },
+        {
+          "name": "max_slippage_bps",
+          "type": "u16"
+        }
+      ]
+    },
+    {
+      "name": "initialize_market",
+      "docs": [
+        "Initialize a new prediction market"
+      ],
+      "discriminator": [
+        35,
+        35,
+        189,
+        193,
+        155,
+        48,
+        170,
+        203
+      ],
+      "accounts": [
+        {
+          "name": "creator",
+          "docs": [
+            "Market creator"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "Market account PDA"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  109,
+                  97,
+                  114,
+                  107,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "market_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "liquidity_pool",
+          "docs": [
+            "Liquidity pool PDA"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "fee_vault",
+          "docs": [
+            "Fee vault PDA"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  101,
+                  101,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "market_id",
+          "type": "u64"
+        },
+        {
+          "name": "question_text",
+          "type": "string"
+        },
+        {
+          "name": "outcomes",
+          "type": {
+            "vec": "string"
+          }
+        },
+        {
+          "name": "trading_fee_bps",
+          "type": "u16"
+        },
+        {
+          "name": "resolution_deadline",
+          "type": "i64"
+        },
+        {
+          "name": "initial_liquidity",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "remove_liquidity",
+      "docs": [
+        "Remove liquidity from a market pool"
+      ],
+      "discriminator": [
+        80,
+        85,
+        209,
+        72,
+        24,
+        206,
+        177,
+        108
+      ],
+      "accounts": [
+        {
+          "name": "provider",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market"
+        },
+        {
+          "name": "liquidity_pool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "market"
+              }
+            ]
+          }
+        },
+        {
+          "name": "lp_position",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  112,
+                  95,
+                  112,
+                  111,
+                  115,
+                  105,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "liquidity_pool"
+              },
+              {
+                "kind": "account",
+                "path": "provider"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "lp_tokens",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "update_market_state",
+      "docs": [
+        "Update market state (Admin only)"
+      ],
+      "discriminator": [
+        195,
+        34,
+        135,
+        147,
+        8,
+        27,
+        159,
+        18
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "docs": [
+            "Market creator or authorized admin"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "Market account"
+          ],
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "new_state",
+          "type": "u8"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "FeeVaultAccount",
+      "discriminator": [
+        147,
+        235,
+        131,
+        190,
+        236,
+        5,
+        155,
+        237
+      ]
+    },
+    {
+      "name": "LPPositionAccount",
+      "discriminator": [
+        70,
+        254,
+        30,
+        107,
+        156,
+        163,
+        242,
+        199
+      ]
+    },
+    {
+      "name": "LiquidityPoolAccount",
+      "discriminator": [
+        206,
+        167,
+        102,
+        42,
+        191,
+        239,
+        193,
+        164
+      ]
+    },
+    {
+      "name": "MarketAccount",
+      "discriminator": [
+        201,
+        78,
+        187,
+        225,
+        240,
+        198,
+        201,
+        251
+      ]
+    },
+    {
+      "name": "PositionAccount",
+      "discriminator": [
+        60,
+        125,
+        250,
+        193,
+        181,
+        109,
+        238,
+        86
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "FeesWithdrawn",
+      "discriminator": [
+        234,
+        15,
+        0,
+        119,
+        148,
+        241,
+        40,
+        21
+      ]
+    },
+    {
+      "name": "LiquidityAdded",
+      "discriminator": [
+        154,
+        26,
+        221,
+        108,
+        238,
+        64,
+        217,
+        161
+      ]
+    },
+    {
+      "name": "LiquidityRemoved",
+      "discriminator": [
+        225,
+        105,
+        216,
+        39,
+        124,
+        116,
+        169,
+        189
+      ]
+    },
+    {
+      "name": "MarketClosed",
+      "discriminator": [
+        86,
+        91,
+        119,
+        43,
+        94,
+        0,
+        217,
+        113
+      ]
+    },
+    {
+      "name": "MarketCreated",
+      "discriminator": [
+        88,
+        184,
+        130,
+        231,
+        226,
+        84,
+        6,
+        58
+      ]
+    },
+    {
+      "name": "MarketResolved",
+      "discriminator": [
+        89,
+        67,
+        230,
+        95,
+        143,
+        106,
+        199,
+        202
+      ]
+    },
+    {
+      "name": "MarketStateChanged",
+      "discriminator": [
+        234,
+        42,
+        174,
+        121,
+        131,
+        50,
+        195,
+        9
+      ]
+    },
+    {
+      "name": "TradeExecuted",
+      "discriminator": [
+        41,
+        110,
+        64,
+        129,
+        60,
+        79,
+        179,
+        80
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidStateTransition",
+      "msg": "Invalid market state transition"
+    },
+    {
+      "code": 6001,
+      "name": "MarketNotActive",
+      "msg": "Market is not active for trading"
+    },
+    {
+      "code": 6002,
+      "name": "MarketAlreadyResolved",
+      "msg": "Market has already been resolved"
+    },
+    {
+      "code": 6003,
+      "name": "ResolutionDeadlineNotReached",
+      "msg": "Resolution deadline not reached"
+    },
+    {
+      "code": 6004,
+      "name": "ResolutionDeadlinePassed",
+      "msg": "Resolution deadline has passed"
+    },
+    {
+      "code": 6005,
+      "name": "InvalidOutcomeIndex",
+      "msg": "Invalid outcome index"
+    },
+    {
+      "code": 6006,
+      "name": "InvalidNumberOfOutcomes",
+      "msg": "Invalid number of outcomes"
+    },
+    {
+      "code": 6007,
+      "name": "QuestionTextTooLong",
+      "msg": "Question text too long"
+    },
+    {
+      "code": 6008,
+      "name": "TradingFeeTooHigh",
+      "msg": "Trading fee exceeds maximum"
+    },
+    {
+      "code": 6009,
+      "name": "SettlementFeeTooHigh",
+      "msg": "Settlement fee exceeds maximum"
+    },
+    {
+      "code": 6010,
+      "name": "InsufficientLiquidity",
+      "msg": "Insufficient liquidity"
+    },
+    {
+      "code": 6011,
+      "name": "SlippageExceeded",
+      "msg": "Slippage tolerance exceeded"
+    },
+    {
+      "code": 6012,
+      "name": "InvalidAmount",
+      "msg": "Amount must be greater than zero"
+    },
+    {
+      "code": 6013,
+      "name": "InsufficientShares",
+      "msg": "Insufficient shares to sell"
+    },
+    {
+      "code": 6014,
+      "name": "Unauthorized",
+      "msg": "Unauthorized: Only creator can perform this action"
+    },
+    {
+      "code": 6015,
+      "name": "MathOverflow",
+      "msg": "Math overflow"
+    },
+    {
+      "code": 6016,
+      "name": "DivisionByZero",
+      "msg": "Division by zero"
+    },
+    {
+      "code": 6017,
+      "name": "InvalidReserves",
+      "msg": "Invalid reserves configuration"
+    },
+    {
+      "code": 6018,
+      "name": "InvariantCalculationFailed",
+      "msg": "Invariant calculation failed"
+    },
+    {
+      "code": 6019,
+      "name": "InvalidLPTokens",
+      "msg": "LP tokens cannot be zero"
+    },
+    {
+      "code": 6020,
+      "name": "CannotCloseMarket",
+      "msg": "Market cannot be closed yet"
+    },
+    {
+      "code": 6021,
+      "name": "NoFeesToWithdraw",
+      "msg": "No fees to withdraw"
+    },
+    {
+      "code": 6022,
+      "name": "MarketNotSettled",
+      "msg": "Market must be settled before closing"
+    },
+    {
+      "code": 6023,
+      "name": "PoolNotEmpty",
+      "msg": "Pool is not empty - positions still exist"
+    }
+  ],
+  "types": [
+    {
+      "name": "FeeVaultAccount",
+      "docs": [
+        "Fee vault account for collecting trading fees"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "docs": [
+              "Associated market"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "total_collected",
+            "docs": [
+              "Total fees collected"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "total_withdrawn",
+            "docs": [
+              "Fees withdrawn"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FeesWithdrawn",
+      "docs": [
+        "Event emitted when fees are withdrawn"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "recipient",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "LPPositionAccount",
+      "docs": [
+        "LP (Liquidity Provider) position account"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "pool",
+            "docs": [
+              "Associated liquidity pool"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "docs": [
+              "LP token owner"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "lp_tokens",
+            "docs": [
+              "LP tokens held"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "initial_investment",
+            "docs": [
+              "Initial investment amount"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "fees_earned",
+            "docs": [
+              "Fees earned"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "created_at",
+            "docs": [
+              "Creation timestamp"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "last_updated",
+            "docs": [
+              "Last update timestamp"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "LiquidityAdded",
+      "docs": [
+        "Event emitted when liquidity is added"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "provider",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "lp_tokens_minted",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "LiquidityPoolAccount",
+      "docs": [
+        "Liquidity pool account for AMM"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "docs": [
+              "Associated market"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "reserves",
+            "docs": [
+              "Reserves for each outcome (in lamports)",
+              "reserves[i] = amount of outcome i tokens in pool"
+            ],
+            "type": {
+              "vec": "u64"
+            }
+          },
+          {
+            "name": "lp_token_supply",
+            "docs": [
+              "Total LP token supply"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "fee_vault",
+            "docs": [
+              "Fee vault for collecting fees"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "invariant",
+            "docs": [
+              "Constant product invariant (k = reserve[0] * reserve[1] * ... * reserve[n])"
+            ],
+            "type": "u128"
+          },
+          {
+            "name": "total_fees_collected",
+            "docs": [
+              "Total fees collected"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "LiquidityRemoved",
+      "docs": [
+        "Event emitted when liquidity is removed"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "provider",
+            "type": "pubkey"
+          },
+          {
+            "name": "lp_tokens_burned",
+            "type": "u64"
+          },
+          {
+            "name": "amount_received",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarketAccount",
+      "docs": [
+        "Main market account storing all market data"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market_id",
+            "docs": [
+              "Unique market ID"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "creator",
+            "docs": [
+              "Market creator (authority)"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "question_text",
+            "docs": [
+              "Market question text (max 280 chars)"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "num_outcomes",
+            "docs": [
+              "Number of possible outcomes"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "state",
+            "docs": [
+              "Current market state"
+            ],
+            "type": {
+              "defined": {
+                "name": "MarketState"
+              }
+            }
+          },
+          {
+            "name": "trading_fee_bps",
+            "docs": [
+              "Trading fee in basis points (100 = 1%)"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "settlement_fee_bps",
+            "docs": [
+              "Settlement fee in basis points"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "liquidity_pool",
+            "docs": [
+              "Liquidity pool PDA"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "fee_vault",
+            "docs": [
+              "Fee vault PDA"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "resolution_deadline",
+            "docs": [
+              "Resolution deadline (Unix timestamp)"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "total_volume",
+            "docs": [
+              "Total trading volume in lamports"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "total_trades",
+            "docs": [
+              "Total number of trades"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "created_at",
+            "docs": [
+              "Market creation timestamp"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "resolved_at",
+            "docs": [
+              "Market resolution timestamp (0 if not resolved)"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "winning_outcome",
+            "docs": [
+              "Winning outcome index (255 if not resolved)"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarketClosed",
+      "docs": [
+        "Event emitted when market is closed"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "creator",
+            "type": "pubkey"
+          },
+          {
+            "name": "fees_withdrawn",
+            "type": "u64"
+          },
+          {
+            "name": "total_volume",
+            "type": "u64"
+          },
+          {
+            "name": "total_trades",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarketCreated",
+      "docs": [
+        "Event emitted when a new market is created"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market_id",
+            "type": "u64"
+          },
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "creator",
+            "type": "pubkey"
+          },
+          {
+            "name": "question_text",
+            "type": "string"
+          },
+          {
+            "name": "num_outcomes",
+            "type": "u8"
+          },
+          {
+            "name": "trading_fee_bps",
+            "type": "u16"
+          },
+          {
+            "name": "resolution_deadline",
+            "type": "i64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarketResolved",
+      "docs": [
+        "Event emitted when market is resolved"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "winning_outcome",
+            "type": "u8"
+          },
+          {
+            "name": "resolver",
+            "type": "pubkey"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarketState",
+      "docs": [
+        "Market state enum"
+      ],
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Initializing"
+          },
+          {
+            "name": "Active"
+          },
+          {
+            "name": "Frozen"
+          },
+          {
+            "name": "Resolved"
+          },
+          {
+            "name": "Settled"
+          },
+          {
+            "name": "Closed"
+          },
+          {
+            "name": "Disputed"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarketStateChanged",
+      "docs": [
+        "Event emitted when market state changes"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "old_state",
+            "type": "string"
+          },
+          {
+            "name": "new_state",
+            "type": "string"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PositionAccount",
+      "docs": [
+        "User position account"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "docs": [
+              "Associated market"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "docs": [
+              "Position owner"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "shares",
+            "docs": [
+              "Shares for each outcome"
+            ],
+            "type": {
+              "vec": "u64"
+            }
+          },
+          {
+            "name": "total_invested",
+            "docs": [
+              "Total amount invested (cost basis)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "realized_pnl",
+            "docs": [
+              "Realized P&L"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "last_updated",
+            "docs": [
+              "Last update timestamp"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TradeExecuted",
+      "docs": [
+        "Event emitted when a trade is executed"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market",
+            "type": "pubkey"
+          },
+          {
+            "name": "trader",
+            "type": "pubkey"
+          },
+          {
+            "name": "outcome_index",
+            "type": "u8"
+          },
+          {
+            "name": "is_buy",
+            "type": "bool"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "price",
+            "type": "u64"
+          },
+          {
+            "name": "fee",
+            "type": "u64"
+          },
+          {
+            "name": "shares",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    }
+  ]
+}
