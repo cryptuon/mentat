@@ -1,0 +1,127 @@
+site_name: Mentat
+site_description: AI-native prediction markets on Solana, resolved by zkTLS proofs.
+site_url: https://mentat.docs.cryptuon.com/
+site_author: Mentat Protocol
+
+repo_url: https://github.com/cryptuon/mentat
+repo_name: cryptuon/mentat
+edit_uri: edit/main/documentation/docs/
+
+docs_dir: docs
+site_dir: site
+
+theme:
+  name: material
+  language: en
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.top
+    - navigation.indexes
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - content.action.edit
+  palette:
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep purple
+      accent: cyan
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep purple
+      accent: cyan
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+  icon:
+    repo: fontawesome/brands/github
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - footnotes
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - toc:
+      permalink: true
+      toc_depth: 3
+
+plugins:
+  - search
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/cryptuon/mentat
+      name: Mentat on GitHub
+
+nav:
+  - Home: index.md
+  - Overview:
+      - Product Overview: overview/product-overview.md
+      - Initial Concept: overview/initial-concept.md
+  - Architecture:
+      - AI Architecture: architecture/ai-architecture.md
+      - System Integration: architecture/system-integration.md
+      - UI Architecture: architecture/ui-architecture.md
+      - Project Structure: architecture/project-structure.md
+  - Markets:
+      - Market Standard: markets/market-standard.md
+      - Solana Market Schema: markets/solana-market-schema.md
+  - Economics:
+      - Tokenomics: economics/tokenomics.md
+      - Fee Model: economics/fee-model.md
+  - Implementation:
+      - AI Agents: implementation/ai-agents.md
+      - Creator Studio: implementation/creator-studio.md
+      - Curator Console: implementation/curator-console.md
+      - Market Factory: implementation/market-factory.md
+      - Market Settlement: implementation/market-settlement.md
+      - Event Indexer: implementation/event-indexer.md
+      - Wallet Integration: implementation/wallet-integration.md
+      - Trading Interface Plan: implementation/trading-interface-plan.md
+      - Trading Interface: implementation/trading-interface.md
+      - Phase 4 Foundation: implementation/phase-4-foundation.md
+  - Guides:
+      - Backend Integration: guides/integration.md
+      - Network Configuration: guides/network-configuration.md
+      - Stores Usage: guides/stores-usage.md
+      - Auth Flow: guides/auth-flow.md
+      - Web Prototype: guides/web-prototype.md
+  - Milestones:
+      - Implementation Plan: milestones/implementation-plan.md
+      - M2 Completion: milestones/m2-completion.md
+      - M3 Plan: milestones/m3-plan.md
+      - M3 Progress: milestones/m3-progress.md
+  - Reference:
+      - Network Indicators: reference/network-indicators.md
+      - Wallet Integration Status: reference/wallet-integration-status.md
+      - Wallet Integration Success: reference/wallet-integration-success.md
+      - Web Integration Summary: reference/web-integration-summary.md
+      - Dead Code Analysis: reference/dead-code-analysis.md
+      - Dead Code Cleanup: reference/dead-code-cleanup.md
+      - TODO Status: reference/todo-status.md
+      - TODO Cleanup: reference/todo-cleanup.md
+      - TODO Final Status: reference/todo-final-status.md
+      - Non-Solana TODOs: reference/non-solana-todos.md
