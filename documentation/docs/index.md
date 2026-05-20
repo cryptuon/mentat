@@ -2,6 +2,12 @@
 
 **AI-native prediction markets on Solana, resolved by zkTLS proofs and bootstrapped with curator-verified agent workflows.**
 
+!!! warning "Under active development"
+
+    Mentat is under active development. APIs, schemas, and on-chain
+    layouts may change. Production use at your own risk. Issues and
+    PRs are welcome — see the [GitHub repo](https://github.com/cryptuon/mentat).
+
 Mentat couples AI-assisted market creation with on-chain settlement so anyone can launch a high-quality prediction market quickly: AI agents draft the question, resolution criteria, and liquidity terms; human curators approve the draft; Solana programs handle trading and settlement; zkTLS proofs bridge real-world data on-chain without trusted arbiters.
 
 ## What you can do here
