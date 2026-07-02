@@ -3,6 +3,15 @@ name = "mentat-ai-agents"
 version = "0.1.0"
 description = "AI agent orchestration for Mentat Protocol market creation"
 requires-python = ">=3.11"
+authors = [{ name = "Cryptuon Research", email = "contact@cryptuon.com" }]
+keywords = ["solana", "prediction-markets", "ai", "zktls", "defi", "blockchain"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
 dependencies = [
     "dspy-ai>=2.4.0",
     "openai>=1.10.0",
@@ -22,6 +31,11 @@ dev = [
     "ruff>=0.1.0",
     "ipython>=8.20.0",
 ]
+
+[project.urls]
+Homepage = "https://mentat.cryptuon.com/"
+Documentation = "https://docs.cryptuon.com/mentat/"
+Repository = "https://github.com/cryptuon/mentat"
 
 [build-system]
 requires = ["setuptools>=68.0"]

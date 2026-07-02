@@ -15,10 +15,20 @@
     "solana",
     "indexer",
     "blockchain",
-    "events"
+    "events",
+    "prediction-markets"
   ],
-  "author": "Mentat Protocol",
+  "author": "Cryptuon Research <contact@cryptuon.com>",
   "license": "MIT",
+  "homepage": "https://mentat.cryptuon.com/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cryptuon/mentat.git",
+    "directory": "apps/indexer"
+  },
+  "bugs": {
+    "url": "https://github.com/cryptuon/mentat/issues"
+  },
   "dependencies": {
     "@coral-xyz/anchor": "^0.31.0",
     "@solana/web3.js": "^1.95.0",

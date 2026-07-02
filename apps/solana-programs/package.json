@@ -1,5 +1,14 @@
 {
-  "license": "ISC",
+  "name": "@mentat/solana-programs",
+  "description": "Anchor programs (market-factory, market-settlement) for Mentat Protocol",
+  "author": "Cryptuon Research <contact@cryptuon.com>",
+  "license": "MIT",
+  "homepage": "https://mentat.cryptuon.com/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cryptuon/mentat.git",
+    "directory": "apps/solana-programs"
+  },
   "scripts": {
     "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
     "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check"

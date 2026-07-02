@@ -1,5 +1,7 @@
 # Mentat Protocol
 
+**[🌐 Site](https://mentat.cryptuon.com/) · [📚 Docs](https://docs.cryptuon.com/mentat/) · [🔬 Cryptuon Research](https://github.com/cryptuon)**
+
 > **Active development.** Mentat is under active development. APIs,
 > schemas, and on-chain layouts may change between releases.
 > Production use at your own risk. Issues and PRs welcome.
@@ -225,3 +227,13 @@ present in the repository.
 
 **Current Milestone**: M3 - On-Chain Launch (complete)
 **Next Milestone**: M4 - zkTLS Integration
+
+---
+
+## Part of Cryptuon Research
+
+`mentat` is one of [20 open-source blockchain-infrastructure projects](https://www.cryptuon.com/projects) from **[Cryptuon Research](https://www.cryptuon.com)** — blockchain theory, shipped as protocols.
+
+**Related projects:** [Moby Market](https://mobymarket.cryptuon.com/) · [PolyBot](https://polybot.cryptuon.com/) · [Sarpoy](https://sarpoy.cryptuon.com/)
+
+Docs: [docs.cryptuon.com/mentat](https://docs.cryptuon.com/mentat/) · Contact: [contact@cryptuon.com](mailto:contact@cryptuon.com)

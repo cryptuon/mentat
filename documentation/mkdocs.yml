@@ -1,7 +1,8 @@
 site_name: Mentat
 site_description: AI-native prediction markets on Solana, resolved by zkTLS proofs.
 site_url: https://docs.cryptuon.com/mentat/
-site_author: Mentat Protocol
+site_author: Cryptuon Research
+copyright: "© 2026 Cryptuon Research"
 
 repo_url: https://github.com/cryptuon/mentat
 repo_name: cryptuon/mentat
@@ -71,10 +72,14 @@ plugins:
   - search
 
 extra:
+  homepage: https://mentat.cryptuon.com/
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/cryptuon/mentat
       name: Mentat on GitHub
+    - icon: fontawesome/solid/globe
+      link: https://www.cryptuon.com
+      name: Cryptuon Research
 
 nav:
   - Home: index.md
