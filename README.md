@@ -220,7 +220,7 @@ See component READMEs for specific development guidelines:
 
 ## License
 
-Mentat is released under the Apache-2.0 license. See [`LICENSE`](./LICENSE) if
+Mentat is released under the MIT license. See [`LICENSE`](./LICENSE) if
 present in the repository.
 
 ---
