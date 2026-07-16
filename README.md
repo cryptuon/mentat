@@ -6,16 +6,58 @@
 > schemas, and on-chain layouts may change between releases.
 > Production use at your own risk. Issues and PRs welcome.
 
-AI-native prediction markets on Solana, resolved by zkTLS proofs and bootstrapped with curator-verified agent workflows.
+**AI-native prediction markets on Solana.** Markets are *drafted by AI agents*,
+*curated by humans*, and *resolved by zkTLS proofs* that cryptographically
+attest to real-world data — so outcomes settle against a verifiable source
+instead of a trusted arbiter.
 
 - Website: [https://mentat.cryptuon.com/](https://mentat.cryptuon.com/)
 - Documentation: [https://docs.cryptuon.com/mentat/](https://docs.cryptuon.com/mentat/)
 - Source: [https://github.com/cryptuon/mentat](https://github.com/cryptuon/mentat)
+- Roadmap: [`ROADMAP.md`](./ROADMAP.md) — including the cheapest path to production
+
+## Why this matters in 2026
+
+Two of the year's defining crypto narratives — **on-chain, verifiable AI** and
+**cryptographic attestation of real-world data** — meet directly in the design
+of a prediction market. A market is only as trustworthy as the mechanism that
+resolves it, and today that mechanism is almost always a trusted oracle or a
+human committee. Mentat removes both:
+
+- **Agent-drafted markets.** A Scout → Draft → Validator agent pipeline turns a
+  one-line idea into a fully specified market — question, outcomes, resolution
+  criteria, and a candidate verifiable data source — in roughly 15 seconds.
+  Verifiable AI here isn't a slogan: every draft is quality-, safety-, and
+  clarity-scored, and a human curator approves it before it goes live.
+- **zkTLS resolution, no trusted arbiter.** Outcomes are settled by zkTLS proofs
+  that attest to what a real-world HTTPS source actually returned, verified
+  on-chain by the `market-settlement` program. The resolver is math plus a
+  public source — not a company, a multisig, or a vote.
 
 ## Vision
-- **Permissionless creation:** AI assistants draft market questions, resolution criteria, and liquidity terms so anyone can launch high-quality markets with minimal friction.
-- **Cryptographic settlement:** zkTLS proofs bridge real-world data into Solana smart contracts, replacing trusted arbiters with verifiable outcomes.
+- **Permissionless creation:** AI agents draft market questions, resolution criteria, and liquidity terms so anyone can launch high-quality markets with minimal friction — and a human curator stays accountable for what ships.
+- **Cryptographic settlement:** zkTLS proofs bridge real-world data into Solana smart contracts, replacing trusted arbiters with verifiable outcomes anyone can check.
 - **Fanatical usability:** A Polymarket-inspired UX couples rapid deployment with transparent discovery, proof timelines, and curator guardrails.
+
+## How Mentat compares
+
+Honest positioning against the incumbents. Mentat's resolution and drafting
+model is the differentiator; the incumbents are more mature and more liquid
+today.
+
+| Dimension | Mentat | Polymarket | Kalshi | Trusted-oracle markets |
+|-----------|--------|-----------|--------|------------------------|
+| **Market creation** | AI-drafted, human-curated | Team / community proposed | Exchange-listed only | Manual |
+| **Resolution** | zkTLS proof of an HTTPS source, verified on-chain | UMA optimistic oracle (token-holder vote) | Regulated exchange (CFTC) | Oracle operator / committee |
+| **Trusted arbiter?** | No — math + public source | Yes — dispute resolution by voters | Yes — the exchange | Yes — the oracle |
+| **Chain** | Solana | Polygon | Off-chain / regulated | Various |
+| **Liquidity & maturity** | Early, pre-production | Deep, live | Deep, regulated | Varies |
+| **Verifiability** | Anyone can re-check the proof | Depends on the dispute vote | Trust the exchange | Trust the operator |
+
+Tradeoffs to be clear about: zkTLS resolution only works when a market's
+outcome is attestable from a real-world HTTPS source, and Mentat is early —
+liquidity, source coverage, and audits are still ahead of us (see
+[`ROADMAP.md`](./ROADMAP.md)).
 
 ## Current Status
 
@@ -139,6 +181,9 @@ larger archive of design notes and milestone reports lives in
 - [Tokenomics](./docs/tokenomics.md) - Token design
 
 ## Roadmap
+
+See [`ROADMAP.md`](./ROADMAP.md) for the full vision, near/mid/long-term
+milestones, and the **cheapest path to production**. Milestone summary:
 
 - ✅ **M1 - Research & Design** (Complete)
   - Market standard definition
